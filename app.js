@@ -307,9 +307,13 @@ function registerEventListeners() {
                     EMAILJS_CONFIG.templateId,
                     {
                         from_name: name,
+                        name: name,
+                        phone: phone,
                         phone_number: phone,
-                        city: city,
-                        message: msg
+                        school: city, // Mapping city to school
+                        role: "Customer",
+                        message: msg,
+                        title: `New Aura Coco Order Inquiry - ${city}`
                     },
                     EMAILJS_CONFIG.publicKey
                 ).then(() => {

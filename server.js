@@ -31,6 +31,30 @@ try {
     console.error('Failed to initialize Razorpay SDK:', error);
 }
 
+// Local Inventory Database Helper functions
+const inventoryFilePath = path.join(__dirname, 'products.json');
+
+function getInventory() {
+    if (!fs.existsSync(inventoryFilePath)) {
+        return [];
+    }
+    try {
+        const data = fs.readFileSync(inventoryFilePath, 'utf8');
+        return JSON.parse(data || '[]');
+    } catch (e) {
+        console.error('Error reading products.json:', e);
+        return [];
+    }
+}
+
+function saveInventory(inventory) {
+    try {
+        fs.writeFileSync(inventoryFilePath, JSON.stringify(inventory, null, 2), 'utf8');
+    } catch (e) {
+        console.error('Error writing products.json:', e);
+    }
+}
+
 // Endpoint to fetch public configurations safely
 app.get('/api/config', (req, res) => {
     if (!process.env.RAZORPAY_KEY_ID) {
@@ -39,10 +63,29 @@ app.get('/api/config', (req, res) => {
     res.json({ keyId: process.env.RAZORPAY_KEY_ID });
 });
 
+// Endpoint to get inventory stock levels
+app.get('/api/products/inventory', (req, res) => {
+    res.json(getInventory());
+});
+
 // Endpoint to create an order
 app.post('/api/create-order', async (req, res) => {
     try {
-        const { amount, currency = 'INR', receipt } = req.body;
+        const { amount, currency = 'INR', receipt, items } = req.body;
+
+        // Inventory check before creating order
+        if (items && Array.isArray(items)) {
+            const inventory = getInventory();
+            for (const item of items) {
+                const productStock = inventory.find(p => p.id === parseInt(item.id, 10));
+                if (!productStock) {
+                    return res.status(400).json({ error: `Product ID ${item.id} not found in inventory.` });
+                }
+                if (productStock.stock < item.quantity) {
+                    return res.status(400).json({ error: `Insufficient stock for product: "${item.name || item.id}". Available: ${productStock.stock}` });
+                }
+            }
+        }
 
         // Basic validations
         if (!amount) {
@@ -110,6 +153,18 @@ app.post('/api/verify-payment', (req, res) => {
         );
 
         if (isValid) {
+            // Deduct from inventory stock
+            if (items && Array.isArray(items)) {
+                const inventory = getInventory();
+                items.forEach(item => {
+                    const productStock = inventory.find(p => p.id === parseInt(item.id, 10));
+                    if (productStock) {
+                        productStock.stock = Math.max(0, productStock.stock - item.quantity);
+                    }
+                });
+                saveInventory(inventory);
+            }
+
             // Save order to local orders.json database
             const ordersFilePath = path.join(__dirname, 'orders.json');
             let orders = [];

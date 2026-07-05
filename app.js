@@ -194,6 +194,7 @@ const PRODUCTS = [
 let state = {
     products: [...PRODUCTS],
     cart: JSON.parse(localStorage.getItem('aura_coco_cart')) || [],
+    inventory: [],
     filters: {
         category: 'all',
         search: '',
@@ -239,13 +240,24 @@ const dom = {
 };
 
 // Initialize Application
-function init() {
+async function init() {
     // Initialize EmailJS if public key is configured
     if (typeof emailjs !== 'undefined' && EMAILJS_CONFIG.publicKey !== 'YOUR_PUBLIC_KEY') {
         emailjs.init({
             publicKey: EMAILJS_CONFIG.publicKey
         });
     }
+
+    // Fetch product stock inventory from backend
+    try {
+        const response = await fetch('/api/products/inventory');
+        if (response.ok) {
+            state.inventory = await response.json();
+        }
+    } catch (e) {
+        console.error('Failed to fetch product inventory:', e);
+    }
+
     renderProducts();
     updateCartUI();
     registerEventListeners();
@@ -395,18 +407,27 @@ function renderProducts() {
     }
 
     state.products.forEach(product => {
+        // Find stock inventory level
+        const inventoryItem = state.inventory.find(inv => inv.id === product.id);
+        const stock = inventoryItem ? inventoryItem.stock : 0;
+        const isOutOfStock = stock <= 0;
+
         const card = document.createElement('article');
         card.className = 'product-card';
+        if (isOutOfStock) {
+            card.classList.add('out-of-stock-card');
+        }
+
         card.innerHTML = `
             <div class="product-media-wrapper">
-                ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
-                <img src="${product.images[0]}" alt="${product.name}" class="product-img main-img" loading="lazy">
-                <img src="${product.images[1] || product.images[0]}" alt="${product.name}" class="product-img alt-img" loading="lazy">
+                ${isOutOfStock ? `<span class="product-badge" style="background: #ef4444; color: #fff;">SOLD OUT</span>` : (product.badge ? `<span class="product-badge">${product.badge}</span>` : '')}
+                <img src="${product.images[0]}" alt="${product.name}" class="product-img main-img" loading="lazy" style="${isOutOfStock ? 'filter: grayscale(0.8) opacity(0.6);' : ''}">
+                <img src="${product.images[1] || product.images[0]}" alt="${product.name}" class="product-img alt-img" loading="lazy" style="${isOutOfStock ? 'filter: grayscale(0.8) opacity(0.6);' : ''}">
                 <div class="product-card-actions">
                     <button class="card-action-btn view-details" data-id="${product.id}" aria-label="View Details">
                         <i class="fa-solid fa-expand"></i>
                     </button>
-                    <button class="card-action-btn quick-add" data-id="${product.id}" aria-label="Quick Add to Bag">
+                    <button class="card-action-btn quick-add" ${isOutOfStock ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''} data-id="${product.id}" aria-label="Quick Add to Bag">
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>
@@ -416,8 +437,8 @@ function renderProducts() {
                 <h3 class="product-name">${product.name}</h3>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; width: 100%;">
                     <span class="product-price" style="margin-top: 0;">₹${product.price.toFixed(2)}</span>
-                    <button class="btn-buy-now" data-id="${product.id}" style="background: #22c55e; color: #0b130e; border: none; padding: 0.4rem 0.8rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: background 0.2s;">
-                        BUY <i class="fa-solid fa-bolt"></i>
+                    <button class="btn-buy-now" ${isOutOfStock ? 'disabled style="background: #4b5563; color: #9ca3af; cursor: not-allowed;"' : 'style="background: #22c55e; color: #0b130e; cursor: pointer;"'} data-id="${product.id}">
+                        ${isOutOfStock ? 'SOLD OUT' : 'BUY <i class="fa-solid fa-bolt"></i>'}
                     </button>
                 </div>
             </div>
@@ -425,14 +446,16 @@ function renderProducts() {
         
         // Event handlers for action items
         card.querySelector('.view-details').addEventListener('click', () => openProductModal(product.id));
-        card.querySelector('.quick-add').addEventListener('click', (e) => {
-            e.stopPropagation();
-            addToCart(product.id, product.sizes[0], product.colors[0]);
-        });
-        card.querySelector('.btn-buy-now').addEventListener('click', (e) => {
-            e.stopPropagation();
-            checkoutProductDirectly(product.id);
-        });
+        if (!isOutOfStock) {
+            card.querySelector('.quick-add').addEventListener('click', (e) => {
+                e.stopPropagation();
+                addToCart(product.id, product.sizes[0], product.colors[0]);
+            });
+            card.querySelector('.btn-buy-now').addEventListener('click', (e) => {
+                e.stopPropagation();
+                checkoutProductDirectly(product.id);
+            });
+        }
         
         dom.productsGrid.appendChild(card);
     });
@@ -586,6 +609,11 @@ function openProductModal(productId) {
     const product = PRODUCTS.find(p => p.id === productId);
     if (!product) return;
 
+    // Get stock level
+    const inventoryItem = state.inventory.find(i => i.id === product.id);
+    const stock = inventoryItem ? inventoryItem.stock : 0;
+    const isOutOfStock = stock <= 0;
+
     let selectedSize = product.sizes[0];
     let selectedColor = product.colors[0];
     let activeImage = product.images[0];
@@ -622,12 +650,12 @@ function openProductModal(productId) {
                     ` : ''}
 
                     <div class="modal-actions-container" style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                        <button class="btn btn-primary add-to-bag-modal" style="flex: 1; margin: 0;">
-                            <span>ADD TO BOX</span>
+                        <button class="btn btn-primary add-to-bag-modal" ${isOutOfStock ? 'disabled style="background: #4b5563; opacity: 0.5; cursor: not-allowed;"' : ''} style="flex: 1; margin: 0;">
+                            <span>${isOutOfStock ? 'OUT OF STOCK' : 'ADD TO BOX'}</span>
                             <i class="fa-solid fa-bag-shopping"></i>
                         </button>
-                        <button class="btn btn-secondary buy-now-modal" style="flex: 1; margin: 0; background: #22c55e; color: #0b130e; border: none;">
-                            <span>BUY NOW</span>
+                        <button class="btn btn-secondary buy-now-modal" ${isOutOfStock ? 'disabled style="background: #4b5563; opacity: 0.5; cursor: not-allowed; color: #9ca3af; border: none;"' : 'style="background: #22c55e; color: #0b130e; border: none;"'} style="flex: 1; margin: 0;">
+                            <span>${isOutOfStock ? 'SOLD OUT' : 'BUY NOW'}</span>
                             <i class="fa-solid fa-bolt"></i>
                         </button>
                     </div>
@@ -655,16 +683,18 @@ function openProductModal(productId) {
             });
         });
 
-        dom.modalBodyContent.querySelector('.add-to-bag-modal').addEventListener('click', () => {
-            addToCart(product.id, selectedSize, selectedColor);
-            closeModal();
-            openCart();
-        });
+        if (!isOutOfStock) {
+            dom.modalBodyContent.querySelector('.add-to-bag-modal').addEventListener('click', () => {
+                addToCart(product.id, selectedSize, selectedColor);
+                closeModal();
+                openCart();
+            });
 
-        dom.modalBodyContent.querySelector('.buy-now-modal').addEventListener('click', () => {
-            closeModal();
-            checkoutProductDirectly(product.id);
-        });
+            dom.modalBodyContent.querySelector('.buy-now-modal').addEventListener('click', () => {
+                closeModal();
+                checkoutProductDirectly(product.id);
+            });
+        }
     }
 
     renderModalBody();
@@ -702,11 +732,15 @@ dom.checkoutBtn.addEventListener('click', async () => {
         }
         const { keyId } = await configResponse.json();
 
-        // 2. Create the order in the backend
+        // 2. Create the order in the backend with inventory checks
         const orderResponse = await fetch('/api/create-order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: amountInPaise, currency: 'INR' })
+            body: JSON.stringify({ 
+                amount: amountInPaise, 
+                currency: 'INR',
+                items: state.cart.map(item => ({ id: item.id, quantity: item.quantity, name: item.name }))
+            })
         });
         if (!orderResponse.ok) {
             const errData = await orderResponse.json();
@@ -732,29 +766,29 @@ dom.checkoutBtn.addEventListener('click', async () => {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
-                            items: state.cart,
+                            items: state.cart.map(item => ({ id: item.id, quantity: item.quantity, name: item.name })),
                             amount: amountInPaise
                         })
                     });
 
                     const verifyData = await verifyResponse.json();
                     if (verifyResponse.ok && verifyData.success) {
-                        showToast("Payment successful! Order processed.");
                         state.cart = [];
                         saveCart();
                         updateCartUI();
                         closeCart();
+                        window.location.href = `/success.html?order_id=${response.razorpay_order_id}&payment_id=${response.razorpay_payment_id}&amount=${amountInPaise / 100}`;
                     } else {
-                        showToast(verifyData.error || "Payment verification failed.");
+                        window.location.href = `/failed.html?reason=${encodeURIComponent(verifyData.error || "Payment verification failed.")}`;
                     }
                 } catch (err) {
                     console.error("Verification error:", err);
-                    showToast("Error verifying payment.");
+                    window.location.href = `/failed.html?reason=${encodeURIComponent(err.message || "Error verifying payment.")}`;
                 }
             },
             modal: {
                 ondismiss: function () {
-                    showToast("Payment cancelled by user.");
+                    window.location.href = `/failed.html?reason=Checkout%20dismissed%20by%20user.`;
                 }
             },
             prefill: {
@@ -770,8 +804,7 @@ dom.checkoutBtn.addEventListener('click', async () => {
         const rzp = new window.Razorpay(options);
         
         rzp.on('payment.failed', function (response) {
-            showToast(`Payment failed: ${response.error.description}`);
-            console.error("Payment failed detail:", response.error);
+            window.location.href = `/failed.html?reason=${encodeURIComponent(response.error.description || "Payment failed.")}`;
         });
 
         rzp.open();
@@ -826,11 +859,15 @@ async function checkoutProductDirectly(productId) {
         }
         const { keyId } = await configResponse.json();
 
-        // 2. Create the order in the backend
+        // 2. Create the order in the backend with inventory checks
         const orderResponse = await fetch('/api/create-order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: amountInPaise, currency: 'INR' })
+            body: JSON.stringify({ 
+                amount: amountInPaise, 
+                currency: 'INR',
+                items: [{ id: product.id, quantity: 1, name: product.name }]
+            })
         });
         if (!orderResponse.ok) {
             const errData = await orderResponse.json();
@@ -871,18 +908,18 @@ async function checkoutProductDirectly(productId) {
 
                     const verifyData = await verifyResponse.json();
                     if (verifyResponse.ok && verifyData.success) {
-                        showToast(`Payment successful! Order processed for ${product.name}.`);
+                        window.location.href = `/success.html?order_id=${response.razorpay_order_id}&payment_id=${response.razorpay_payment_id}&amount=${amountInPaise / 100}`;
                     } else {
-                        showToast(verifyData.error || "Payment verification failed.");
+                        window.location.href = `/failed.html?reason=${encodeURIComponent(verifyData.error || "Payment verification failed.")}`;
                     }
                 } catch (err) {
                     console.error("Verification error:", err);
-                    showToast("Error verifying payment.");
+                    window.location.href = `/failed.html?reason=${encodeURIComponent(err.message || "Error verifying payment.")}`;
                 }
             },
             modal: {
                 ondismiss: function () {
-                    showToast("Payment cancelled.");
+                    window.location.href = `/failed.html?reason=Checkout%20dismissed%20by%20user.`;
                 }
             },
             prefill: {
@@ -898,7 +935,7 @@ async function checkoutProductDirectly(productId) {
         const rzp = new window.Razorpay(options);
         
         rzp.on('payment.failed', function (response) {
-            showToast(`Payment failed: ${response.error.description}`);
+            window.location.href = `/failed.html?reason=${encodeURIComponent(response.error.description || "Payment failed.")}`;
         });
 
         rzp.open();

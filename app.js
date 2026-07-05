@@ -6,7 +6,7 @@ const PRODUCTS = [
         category: "raw",
         price: 240.00,
         badge: "Harvest Fresh",
-        description: "Naturally sweet, hydration-packed tender coconuts plucked straight from Nagercoil groves. Shaved, top-cut, and ready with straws.",
+        description: "Naturally sweet, hydration-packed tender coconuts plucked straight from Nagercoil groves. Shaved, top-cut, and ready with straws. Best fresh tender coconut delivery in Nagercoil and Chennai.",
         sizes: ["Standard Box", "Large Box (12 pcs)"],
         colors: ["#ffffff"],
         images: [
@@ -20,7 +20,7 @@ const PRODUCTS = [
         category: "processed",
         price: 320.00,
         badge: "100% Pure",
-        description: "Zero heat processing. Extra virgin oil cold-extracted from fresh coconut milk. Rich in MCFAs, perfect for culinary and cosmetic luxury.",
+        description: "Zero heat processing. Premium quality virgin coconut oil cold-extracted from fresh coconut milk in Nagercoil. Rich in MCFAs, perfect for culinary and cosmetic luxury. Purest cold pressed coconut oil.",
         sizes: ["500ml", "1 Litre"],
         colors: ["#ffffff"],
         images: [
@@ -34,7 +34,7 @@ const PRODUCTS = [
         category: "raw",
         price: 65.00,
         badge: "Premium Sweet",
-        description: "The famous orange-skin Sevvilani (King Coconut). Renowned for its rich nutrient profile and exceptionally high sugar-water concentration.",
+        description: "The famous orange-skin Sevvilani (King Coconut). Renowned for its rich nutrient profile and exceptionally high sugar-water concentration. Sweetest tender coconut from Nagercoil.",
         sizes: ["Single Piece", "Pack of 3"],
         colors: ["#ffa500"],
         images: [
@@ -48,7 +48,7 @@ const PRODUCTS = [
         category: "crafts",
         price: 290.00,
         badge: "Eco-Friendly",
-        description: "Reclaimed coconut shells handcrafted by local artisans in Nagercoil. Sanded smooth, polished with virgin coconut oil. Set of 2.",
+        description: "Reclaimed coconut shells handcrafted by local artisans in Nagercoil. Sanded smooth, polished with virgin coconut oil. Set of 2 eco bowls.",
         sizes: ["Standard Set"],
         colors: ["#8b5a2b"],
         images: [
@@ -62,7 +62,7 @@ const PRODUCTS = [
         category: "processed",
         price: 450.00,
         badge: "Low GI Sweetener",
-        description: "100% natural, unrefined syrup tapped from the coconut palm blossom. A highly nutritious alternative to honey or refined sugar.",
+        description: "100% natural, unrefined syrup tapped from the coconut palm blossom in Nagercoil. A highly nutritious alternative to honey or refined sugar.",
         sizes: ["250ml"],
         colors: ["#d2b48c"],
         images: [
@@ -76,7 +76,7 @@ const PRODUCTS = [
         category: "processed",
         price: 120.00,
         badge: "Fresh Batch",
-        description: "Rich, creamy milk extracted from first-press mature coconut meat. Unsweetened, free from thickeners and preservatives.",
+        description: "Rich, creamy milk extracted from first-press mature coconut meat in Nagercoil. Unsweetened, free from thickeners and preservatives. Fresh coconut milk delivery.",
         sizes: ["500ml"],
         colors: ["#ffffff"],
         images: [
@@ -90,7 +90,7 @@ const PRODUCTS = [
         category: "crafts",
         price: 1200.00,
         badge: "Traditional",
-        description: "Authentic, high-quality old sarees preserved and refurbished with traditional handloom work.",
+        description: "Authentic, high-quality old sarees preserved and refurbished with traditional handloom work by weavers in Nagercoil.",
         sizes: ["Standard Size"],
         colors: ["#ff0000", "#0000ff"],
         images: [
@@ -103,7 +103,7 @@ const PRODUCTS = [
         category: "processed",
         price: 150.00,
         badge: "Homemade Style",
-        description: "Authentic homemade style spicy chili powder blend, ground to perfection. Perfect with idli and dosa.",
+        description: "Authentic homemade style spicy chili powder blend, ground to perfection in Nagercoil. Perfect with idli and dosa.",
         sizes: ["250g", "500g"],
         colors: ["#ff0000"],
         images: [
@@ -116,7 +116,7 @@ const PRODUCTS = [
         category: "processed",
         price: 180.00,
         badge: "Hot & Aromatic",
-        description: "Aromatic blend of spices for making home-style pickles or seasoning side dishes.",
+        description: "Aromatic blend of spices for making home-style pickles or seasoning side dishes, made traditionally in Nagercoil.",
         sizes: ["200g"],
         colors: ["#ff0000"],
         images: [
@@ -129,7 +129,7 @@ const PRODUCTS = [
         category: "processed",
         price: 95.00,
         badge: "Freshly Fried",
-        description: "Crisp and delicious banana chips fried in 100% pure cold-pressed coconut oil.",
+        description: "Crisp and delicious banana chips fried in 100% pure cold-pressed coconut oil sourced from Nagercoil.",
         sizes: ["150g", "300g"],
         colors: ["#ffff00"],
         images: [
@@ -142,7 +142,7 @@ const PRODUCTS = [
         category: "raw",
         price: 27.00,
         badge: "Organic Fresh",
-        description: "Single whole organic coconut, plucked fresh from our Nagercoil coastal groves.",
+        description: "Single whole organic coconut, plucked fresh from our Nagercoil coastal groves. Order fresh coconut delivery in Nagercoil.",
         sizes: ["1 Piece"],
         colors: ["#8b5a2b"],
         images: [
@@ -155,7 +155,7 @@ const PRODUCTS = [
         category: "raw",
         price: 25.00,
         badge: "Sweet & Ripe",
-        description: "Sweet and delicious farm-fresh ripe jackfruit piece, locally sourced.",
+        description: "Sweet and delicious farm-fresh ripe jackfruit piece, locally sourced from organic gardens in Nagercoil.",
         sizes: ["1 Piece"],
         colors: ["#00ff00"],
         images: [

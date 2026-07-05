@@ -414,7 +414,12 @@ function renderProducts() {
             <div class="product-info">
                 <span class="product-category">${product.category}</span>
                 <h3 class="product-name">${product.name}</h3>
-                <span class="product-price">₹${product.price.toFixed(2)}</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; width: 100%;">
+                    <span class="product-price" style="margin-top: 0;">₹${product.price.toFixed(2)}</span>
+                    <button class="btn-buy-now" data-id="${product.id}" style="background: #22c55e; color: #0b130e; border: none; padding: 0.4rem 0.8rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: background 0.2s;">
+                        BUY <i class="fa-solid fa-bolt"></i>
+                    </button>
+                </div>
             </div>
         `;
         
@@ -423,6 +428,10 @@ function renderProducts() {
         card.querySelector('.quick-add').addEventListener('click', (e) => {
             e.stopPropagation();
             addToCart(product.id, product.sizes[0], product.colors[0]);
+        });
+        card.querySelector('.btn-buy-now').addEventListener('click', (e) => {
+            e.stopPropagation();
+            checkoutProductDirectly(product.id);
         });
         
         dom.productsGrid.appendChild(card);
@@ -782,6 +791,110 @@ function showToast(message) {
         toast.style.animation = 'fadeOut 0.5s forwards';
         setTimeout(() => toast.remove(), 500);
     }, 4000);
+}
+
+// Quick Buy checkout logic for a single product
+async function checkoutProductDirectly(productId) {
+    const product = PRODUCTS.find(p => p.id === productId);
+    if (!product) return;
+
+    showToast(`Initiating checkout for ${product.name}...`);
+
+    try {
+        const amountInPaise = Math.round(product.price * 100);
+
+        if (amountInPaise < 100) {
+            showToast("Minimum order amount is ₹1.00.");
+            return;
+        }
+
+        // 1. Fetch Razorpay key configuration from backend
+        const configResponse = await fetch('/api/config');
+        if (!configResponse.ok) {
+            throw new Error('Failed to load payment configuration.');
+        }
+        const { keyId } = await configResponse.json();
+
+        // 2. Create the order in the backend
+        const orderResponse = await fetch('/api/create-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amountInPaise, currency: 'INR' })
+        });
+        if (!orderResponse.ok) {
+            const errData = await orderResponse.json();
+            throw new Error(errData.error || 'Failed to create order.');
+        }
+        const orderData = await orderResponse.json();
+
+        // 3. Open Razorpay payment modal
+        const options = {
+            key: keyId,
+            amount: orderData.amount,
+            currency: orderData.currency,
+            name: "Aura Coco",
+            description: `Order: ${product.name}`,
+            order_id: orderData.order_id,
+            handler: async function (response) {
+                try {
+                    // Send signature/payment details to backend for verification
+                    const verifyResponse = await fetch('/api/verify-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            items: [{
+                                id: product.id,
+                                name: product.name,
+                                price: product.price,
+                                image: product.images[0],
+                                size: product.sizes[0],
+                                color: product.colors[0],
+                                quantity: 1
+                            }],
+                            amount: amountInPaise
+                        })
+                    });
+
+                    const verifyData = await verifyResponse.json();
+                    if (verifyResponse.ok && verifyData.success) {
+                        showToast(`Payment successful! Order processed for ${product.name}.`);
+                    } else {
+                        showToast(verifyData.error || "Payment verification failed.");
+                    }
+                } catch (err) {
+                    console.error("Verification error:", err);
+                    showToast("Error verifying payment.");
+                }
+            },
+            modal: {
+                ondismiss: function () {
+                    showToast("Payment cancelled.");
+                }
+            },
+            prefill: {
+                name: "",
+                email: "",
+                contact: ""
+            },
+            theme: {
+                color: "#1e3a1e"
+            }
+        };
+
+        const rzp = new window.Razorpay(options);
+        
+        rzp.on('payment.failed', function (response) {
+            showToast(`Payment failed: ${response.error.description}`);
+        });
+
+        rzp.open();
+    } catch (error) {
+        console.error("Checkout error:", error);
+        showToast(error.message || "An error occurred during checkout.");
+    }
 }
 
 // Start Application on Load

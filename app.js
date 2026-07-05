@@ -621,10 +621,16 @@ function openProductModal(productId) {
                         </div>
                     ` : ''}
 
-                    <button class="btn btn-primary add-to-bag-modal" style="margin-top: 1.5rem;">
-                        <span>ADD TO BOX</span>
-                        <i class="fa-solid fa-bag-shopping"></i>
-                    </button>
+                    <div class="modal-actions-container" style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button class="btn btn-primary add-to-bag-modal" style="flex: 1; margin: 0;">
+                            <span>ADD TO BOX</span>
+                            <i class="fa-solid fa-bag-shopping"></i>
+                        </button>
+                        <button class="btn btn-secondary buy-now-modal" style="flex: 1; margin: 0; background: #22c55e; color: #0b130e; border: none;">
+                            <span>BUY NOW</span>
+                            <i class="fa-solid fa-bolt"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
@@ -653,6 +659,11 @@ function openProductModal(productId) {
             addToCart(product.id, selectedSize, selectedColor);
             closeModal();
             openCart();
+        });
+
+        dom.modalBodyContent.querySelector('.buy-now-modal').addEventListener('click', () => {
+            closeModal();
+            checkoutProductDirectly(product.id);
         });
     }
 

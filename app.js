@@ -202,6 +202,12 @@ let state = {
     }
 };
 
+// Base API URL configuration
+// Replace 'https://auracoco-backend.onrender.com' with your actual Render/Railway backend URL once deployed.
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.') 
+    ? '' 
+    : 'https://auracoco-backend.onrender.com';
+
 // EmailJS Configuration
 const EMAILJS_CONFIG = {
     serviceId: 'service_4v90p4q',
@@ -250,7 +256,7 @@ async function init() {
 
     // Fetch product stock inventory from backend
     try {
-        const response = await fetch('/api/products/inventory');
+        const response = await fetch(`${API_BASE_URL}/api/products/inventory`);
         if (response.ok) {
             state.inventory = await response.json();
         }
@@ -726,14 +732,14 @@ dom.checkoutBtn.addEventListener('click', async () => {
         }
 
         // 1. Fetch Razorpay key configuration from backend
-        const configResponse = await fetch('/api/config');
+        const configResponse = await fetch(`${API_BASE_URL}/api/config`);
         if (!configResponse.ok) {
             throw new Error('Failed to load payment configuration.');
         }
         const { keyId } = await configResponse.json();
 
         // 2. Create the order in the backend with inventory checks
-        const orderResponse = await fetch('/api/create-order', {
+        const orderResponse = await fetch(`${API_BASE_URL}/api/create-order`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -759,7 +765,7 @@ dom.checkoutBtn.addEventListener('click', async () => {
             handler: async function (response) {
                 try {
                     // Send signature/payment details to backend for verification
-                    const verifyResponse = await fetch('/api/verify-payment', {
+                    const verifyResponse = await fetch(`${API_BASE_URL}/api/verify-payment`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -853,14 +859,14 @@ async function checkoutProductDirectly(productId) {
         }
 
         // 1. Fetch Razorpay key configuration from backend
-        const configResponse = await fetch('/api/config');
+        const configResponse = await fetch(`${API_BASE_URL}/api/config`);
         if (!configResponse.ok) {
             throw new Error('Failed to load payment configuration.');
         }
         const { keyId } = await configResponse.json();
 
         // 2. Create the order in the backend with inventory checks
-        const orderResponse = await fetch('/api/create-order', {
+        const orderResponse = await fetch(`${API_BASE_URL}/api/create-order`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -886,7 +892,7 @@ async function checkoutProductDirectly(productId) {
             handler: async function (response) {
                 try {
                     // Send signature/payment details to backend for verification
-                    const verifyResponse = await fetch('/api/verify-payment', {
+                    const verifyResponse = await fetch(`${API_BASE_URL}/api/verify-payment`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({

@@ -263,6 +263,10 @@
     </div>
 
     <script>
+        const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.') 
+            ? '' 
+            : 'https://auracoco-backend.onrender.com';
+
         async function fetchOrders() {
             const tbody = document.getElementById('orders-tbody');
             const emptyState = document.getElementById('empty-state');
@@ -270,7 +274,7 @@
             const revenueSpan = document.getElementById('stat-revenue');
 
             try {
-                const response = await fetch('/api/admin/orders');
+                const response = await fetch(`${API_BASE_URL}/api/admin/orders`);
                 if (!response.ok) {
                     throw new Error('Failed to load orders.');
                 }

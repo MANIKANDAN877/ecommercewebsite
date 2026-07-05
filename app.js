@@ -178,7 +178,7 @@ let state = {
 // EmailJS Configuration
 const EMAILJS_CONFIG = {
     serviceId: 'service_4v90p4q',
-    templateId: 'template_d5ih6mv', // EmailJS Template ID
+    templateId: 'aqfw1st', // EmailJS Template ID
     publicKey: 'Q462ZGqIi5J63iocg'      // Replace with your EmailJS Public Key
 };
 

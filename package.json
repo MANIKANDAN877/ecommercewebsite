@@ -1,0 +1,29 @@
+{
+  "name": "ecommerce-website",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000e\u0000c\u0000o\u0000m\u0000m\u0000e\u0000r\u0000c\u0000e\u0000w\u0000e\u0000b\u0000s\u0000i\u0000t\u0000e\u0000\r\u0000 \u0000",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MANIKANDAN877/ecommercewebsite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MANIKANDAN877/ecommercewebsite/issues"
+  },
+  "homepage": "https://github.com/MANIKANDAN877/ecommercewebsite#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "razorpay": "^2.9.6"
+  }
+}

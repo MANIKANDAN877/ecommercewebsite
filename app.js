@@ -625,17 +625,117 @@ function openProductModal(productId) {
     dom.productModal.classList.add('open');
 }
 
-// Simulating Order Form Checkout
-dom.checkoutBtn.addEventListener('click', () => {
-    showToast("Connecting to zone distributor...");
-    setTimeout(() => {
-        // Open WhatsApp order link or contact form smoothly
-        showToast("Success! Delivery dispatching to Chennai/Nagercoil lines.");
-        state.cart = [];
-        saveCart();
-        updateCartUI();
-        closeCart();
-    }, 2000);
+// Razorpay Integration Checkout Flow
+dom.checkoutBtn.addEventListener('click', async () => {
+    if (state.cart.length === 0) {
+        showToast("Your cart is empty.");
+        return;
+    }
+
+    // Disable button to prevent double submission
+    dom.checkoutBtn.disabled = true;
+    const originalBtnText = dom.checkoutBtn.innerHTML;
+    dom.checkoutBtn.innerHTML = '<span>Processing...</span><i class="fa-solid fa-spinner fa-spin"></i>';
+
+    try {
+        // Calculate subtotal in paise (amount * 100)
+        const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const amountInPaise = Math.round(subtotal * 100);
+
+        if (amountInPaise < 100) {
+            showToast("Minimum order amount is ₹1.00.");
+            dom.checkoutBtn.disabled = false;
+            dom.checkoutBtn.innerHTML = originalBtnText;
+            return;
+        }
+
+        // 1. Fetch Razorpay key configuration from backend
+        const configResponse = await fetch('/api/config');
+        if (!configResponse.ok) {
+            throw new Error('Failed to load payment configuration.');
+        }
+        const { keyId } = await configResponse.json();
+
+        // 2. Create the order in the backend
+        const orderResponse = await fetch('/api/create-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amountInPaise, currency: 'INR' })
+        });
+        if (!orderResponse.ok) {
+            const errData = await orderResponse.json();
+            throw new Error(errData.error || 'Failed to create order.');
+        }
+        const orderData = await orderResponse.json();
+
+        // 3. Open Razorpay payment modal
+        const options = {
+            key: keyId,
+            amount: orderData.amount,
+            currency: orderData.currency,
+            name: "Aura Coco",
+            description: "Premium Organic Coconut Products",
+            order_id: orderData.order_id,
+            handler: async function (response) {
+                try {
+                    // Send signature/payment details to backend for verification
+                    const verifyResponse = await fetch('/api/verify-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            items: state.cart,
+                            amount: amountInPaise
+                        })
+                    });
+
+                    const verifyData = await verifyResponse.json();
+                    if (verifyResponse.ok && verifyData.success) {
+                        showToast("Payment successful! Order processed.");
+                        state.cart = [];
+                        saveCart();
+                        updateCartUI();
+                        closeCart();
+                    } else {
+                        showToast(verifyData.error || "Payment verification failed.");
+                    }
+                } catch (err) {
+                    console.error("Verification error:", err);
+                    showToast("Error verifying payment.");
+                }
+            },
+            modal: {
+                ondismiss: function () {
+                    showToast("Payment cancelled by user.");
+                }
+            },
+            prefill: {
+                name: "",
+                email: "",
+                contact: ""
+            },
+            theme: {
+                color: "#1e3a1e" // Forest green styling to match Aura Coco brand
+            }
+        };
+
+        const rzp = new window.Razorpay(options);
+        
+        rzp.on('payment.failed', function (response) {
+            showToast(`Payment failed: ${response.error.description}`);
+            console.error("Payment failed detail:", response.error);
+        });
+
+        rzp.open();
+    } catch (error) {
+        console.error("Checkout error:", error);
+        showToast(error.message || "An error occurred during checkout.");
+    } finally {
+        dom.checkoutBtn.disabled = false;
+        dom.checkoutBtn.innerHTML = originalBtnText;
+    }
 });
 
 function closeModal() {

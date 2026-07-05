@@ -37,7 +37,7 @@ const PRODUCTS = [
         colors: ["#ffffff"],
         images: [
             "https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=600&auto=format&fit=crop&q=60",
-            "https://images.unsplash.com/photo-1589883661923-6476cb0ae9f2?w=600&auto=format&fit=crop&q=60"
+            "https://images.unsplash.com/photo-1543218024-57a70143c369?w=600&auto=format&fit=crop&q=60"
         ]
     },
     {

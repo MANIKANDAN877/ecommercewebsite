@@ -1,6 +1,32 @@
 // Curated Organic Coconut Products
 const PRODUCTS = [
     {
+        id: 13,
+        name: "OFFICE RUBBER ERASER",
+        category: "crafts",
+        price: 1.00,
+        badge: "Essential",
+        description: "Premium grade non-dust rubber eraser, perfect for quick and clean corrections.",
+        sizes: ["Standard Box"],
+        colors: ["#ffffff"],
+        images: [
+            "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=600&auto=format&fit=crop&q=60"
+        ]
+    },
+    {
+        id: 14,
+        name: "PREMIUM A4 SHEET",
+        category: "crafts",
+        price: 1.00,
+        badge: "Stationery",
+        description: "High brightness 75GSM white A4 paper sheet, perfect for office printing and sketching.",
+        sizes: ["Single Pack"],
+        colors: ["#ffffff"],
+        images: [
+            "https://images.unsplash.com/photo-1603481588273-2f908a9a7a1b?w=600&auto=format&fit=crop&q=60"
+        ]
+    },
+    {
         id: 1,
         name: "FRESH TENDER COCONUT (PACK OF 6)",
         category: "raw",

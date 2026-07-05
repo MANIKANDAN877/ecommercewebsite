@@ -175,6 +175,13 @@ let state = {
     }
 };
 
+// EmailJS Configuration
+const EMAILJS_CONFIG = {
+    serviceId: 'service_4v90p4q',
+    templateId: 'template_d5ih6mv', // EmailJS Template ID
+    publicKey: 'Q462ZGqIi5J63iocg'      // Replace with your EmailJS Public Key
+};
+
 // DOM Cache
 const dom = {
     productsGrid: document.getElementById('products-grid'),
@@ -207,6 +214,12 @@ const dom = {
 
 // Initialize Application
 function init() {
+    // Initialize EmailJS if public key is configured
+    if (typeof emailjs !== 'undefined' && EMAILJS_CONFIG.publicKey !== 'YOUR_PUBLIC_KEY') {
+        emailjs.init({
+            publicKey: EMAILJS_CONFIG.publicKey
+        });
+    }
     renderProducts();
     updateCartUI();
     registerEventListeners();
@@ -286,7 +299,28 @@ function registerEventListeners() {
             const city = document.getElementById('order-city').value;
             const msg = document.getElementById('order-message').value;
 
-            showToast(`Inquiry received for ${city}! Contacting you soon.`);
+            // Submit using EmailJS if configured
+            if (typeof emailjs !== 'undefined' && EMAILJS_CONFIG.publicKey !== 'YOUR_PUBLIC_KEY') {
+                showToast("Sending inquiry...");
+                emailjs.send(
+                    EMAILJS_CONFIG.serviceId,
+                    EMAILJS_CONFIG.templateId,
+                    {
+                        from_name: name,
+                        phone_number: phone,
+                        city: city,
+                        message: msg
+                    },
+                    EMAILJS_CONFIG.publicKey
+                ).then(() => {
+                    showToast(`Inquiry sent successfully for ${city}!`);
+                }).catch((error) => {
+                    console.error('EmailJS Error:', error);
+                    showToast("Failed to send inquiry via email. Sourcing locally...");
+                });
+            } else {
+                showToast(`Inquiry received for ${city}! Contacting you soon.`);
+            }
             dom.orderInquiryForm.reset();
         });
     }

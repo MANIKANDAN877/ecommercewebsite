@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="AURA COCO - Premium Organic Coconuts and Coconut Products. Exclusively sourcing and delivering to Chennai and Nagercoil.">
+    <title>AURA COCO // Premium Organic Coconuts</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&family=Syne:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="brand-logo">AURA COCO<span>.</span></a>
+
+            <nav class="nav-links">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#shop" class="nav-link">Coconuts</a>
+                <a href="#about" class="nav-link">Our Source</a>
+                <a href="#contact" class="nav-link">Order/Contact</a>
+            </nav>
+
+            <div class="nav-actions">
+                <button class="nav-btn" id="search-toggle-btn" aria-label="Toggle Search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <button class="nav-btn cart-trigger" id="cart-btn" aria-label="Open Shopping Cart">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-badge" id="cart-badge-count">0</span>
+                </button>
+                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Interactive Search Bar Dropdown -->
+        <div class="search-dropdown" id="search-dropdown">
+            <div class="search-wrapper">
+                <input type="text" id="search-input" placeholder="Search premium coconut range..." autocomplete="off">
+                <button id="search-clear-btn" aria-label="Clear Search"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav" id="mobile-nav">
+        <button class="close-mobile-nav" id="close-mobile-nav-btn"><i class="fa-solid fa-xmark"></i></button>
+        <div class="mobile-nav-links">
+            <a href="#home" class="mobile-nav-link">Home</a>
+            <a href="#shop" class="mobile-nav-link">Coconuts</a>
+            <a href="#about" class="mobile-nav-link">Our Source</a>
+            <a href="#contact" class="mobile-nav-link">Order/Contact</a>
+        </div>
+    </div>
+
+    <!-- Hero Video Section -->
+    <section class="hero-section" id="home">
+        <div class="video-container">
+            <div class="video-overlay"></div>
+            <video autoplay loop muted playsinline class="hero-video">
+                <source
+                    src="https://assets.mixkit.co/videos/preview/mixkit-sun-shining-through-palm-trees-43285-large.mp4"
+                    type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="hero-content">
+            <h2 class="hero-subtitle">100% ORGANIC & FRESH SOURCED</h2>
+            <h1 class="hero-title">NATURE'S HYDRATION<br>ELEVATED</h1>
+            <p class="hero-desc">Sourced directly from the lush coastal groves of Nagercoil and delivered fresh.
+                Exclusively serving customers in <strong>Chennai</strong> and <strong>Nagercoil</strong>.</p>
+            <div class="hero-actions">
+                <a href="#shop" class="btn btn-primary btn-glow">EXPLORE PRODUCTS</a>
+                <a href="#contact" class="btn btn-secondary">ORDER DIRECTLY</a>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <span class="mouse-icon">
+                <span class="wheel"></span>
+            </span>
+            <span class="scroll-text">Scroll Down</span>
+        </div>
+    </section>
+
+    <!-- Delivery / Location Banner Info -->
+    <div class="location-banner">
+        <div class="location-banner-content">
+            <span><i class="fa-solid fa-truck-fast"></i> Express Delivery: <strong>Chennai</strong> &
+                <strong>Nagercoil</strong> zones only.</span>
+            <span><i class="fa-solid fa-seedling"></i> Harvest-to-Home in 24 hours.</span>
+        </div>
+    </div>
+
+    <!-- Shopping Section -->
+    <main class="shop-container" id="shop">
+        <div class="section-header">
+            <h2 class="section-title">THE COCONUT HARVEST</h2>
+            <p class="section-subtitle">Freshly plucked tender coconuts, pure virgin oils, and handcrafted goods.</p>
+        </div>
+
+        <!-- Filter & Sorting Bar -->
+        <div class="filter-bar">
+            <div class="filter-tags" id="category-filters">
+                <button class="filter-tag active" data-category="all">All Items</button>
+                <button class="filter-tag" data-category="raw">Fresh Coconuts</button>
+                <button class="filter-tag" data-category="processed">Coconut Oils & Food</button>
+                <button class="filter-tag" data-category="crafts">Artisanal Crafts</button>
+            </div>
+
+            <div class="sorting-controls">
+                <select id="sort-select" aria-label="Sort products">
+                    <option value="default">Sort: Featured</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="name-asc">Alphabetical: A-Z</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="products-grid" id="products-grid">
+            <!-- Dynamic Injection via app.js -->
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Brand Philosophy / About Section -->
+    <section class="about-section" id="about">
+        <div class="about-grid">
+            <div class="about-image-wrapper">
+                <video autoplay loop muted playsinline class="about-video-loop">
+                    <source
+                        src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-waves-splashing-on-a-sandy-beach-40176-large.mp4"
+                        type="video/mp4">
+                </video>
+                <div class="about-img-overlay"></div>
+            </div>
+            <div class="about-content">
+                <h3 class="about-tag">OUR SOURCING</h3>
+                <h2 class="about-heading">FROM NAGERCOIL GROVES TO CHENNAI HOMES</h2>
+                <p class="about-text">Nagercoil's unique soil and coastal air yield some of the sweetest, highest
+                    water-volume tender coconuts in the world. We hand-select each coconut from eco-sustainable farms
+                    and transport them straight to Chennai. No artificial ripening, no chemical treatment.</p>
+                <div class="brand-metrics">
+                    <div class="metric">
+                        <span class="metric-num">100%</span>
+                        <span class="metric-label">Organic Grown</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-num">12hr</span>
+                        <span class="metric-label">Harvest Delivery</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-num">Pure</span>
+                        <span class="metric-label">Cold Pressed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Custom Order & Contact Form for Chennai / Nagercoil -->
+    <section class="contact-section" id="contact">
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3 class="contact-tag">ORDER INQUIRY</h3>
+                <h2 class="contact-heading">CONTACT OUR ZONE DISTRIBUTORS</h2>
+                <p class="contact-text">Since we deliver exclusively to Chennai and Nagercoil, let us know your location
+                    and desired quantity. Our delivery officers will contact you immediately.</p>
+
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <div>
+                            <h4>Chennai Head Hub</h4>
+                            <p>Adyar & ECR Delivery Line, Chennai</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <div>
+                            <h4>Nagercoil Sourcing Hub</h4>
+                            <p>Cape Road District, Nagercoil</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        <div>
+                            <h4>Instant WhatsApp Order</h4>
+                            <p>+91 8778093735 (Chennai) / +91 8778093735(Nagercoil)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form-wrapper">
+                <form class="contact-form" id="order-inquiry-form">
+                    <div class="form-group">
+                        <label for="order-name">Your Name</label>
+                        <input type="text" id="order-name" placeholder="E.g. Mani Kandan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="order-phone">Phone Number</label>
+                        <input type="tel" id="order-phone" placeholder="E.g. +91 99999 88888" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="order-city">Select Your City</label>
+                        <select id="order-city" required>
+                            <option value="" disabled selected>Choose your delivery zone</option>
+                            <option value="Chennai">Chennai</option>
+                            <option value="Nagercoil">Nagercoil</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="order-message">Required Items / Quantity</label>
+                        <textarea id="order-message" rows="4"
+                            placeholder="E.g. 10 Tender Coconuts, 2L Virgin Coconut Oil..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-glow">SUBMIT ORDER ENQUIRY</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shopping Cart Slide-out Drawer -->
+    <div class="cart-drawer-overlay" id="cart-overlay"></div>
+    <aside class="cart-drawer" id="cart-drawer" aria-labelledby="cart-title">
+        <div class="cart-header">
+            <h2 id="cart-title">Your Harvest Box (<span id="cart-count">0</span>)</h2>
+            <button class="close-cart-btn" id="close-cart-btn" aria-label="Close Shopping Cart">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="cart-items-container" id="cart-items-container">
+            <!-- Dynamic Cart Items -->
+            <div class="cart-empty-state">
+                <i class="fa-solid fa-basket-shopping"></i>
+                <p>Your harvest box is empty.</p>
+                <a href="#shop" class="btn btn-primary close-cart-action">BROWSE HARVEST</a>
+            </div>
+        </div>
+
+        <div class="cart-footer" id="cart-footer">
+            <div class="cart-summary-row">
+                <span>Subtotal</span>
+                <span id="cart-subtotal">$0.00</span>
+            </div>
+            <p class="cart-shipping-note">Free shipping on orders above ₹500 in Chennai & Nagercoil.</p>
+            <button class="btn btn-primary checkout-btn" id="checkout-btn">
+                <span>PLACE SECURE ORDER</span>
+                <i class="fa-solid fa-arrow-right-long"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Product Detail Modal Overlay -->
+    <div class="modal-overlay" id="product-modal">
+        <div class="modal-card">
+            <button class="close-modal-btn" id="close-modal-btn" aria-label="Close Details">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-body" id="modal-body-content">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast System -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <a href="#" class="brand-logo">AURA COCO<span>.</span></a>
+                <p class="footer-desc">Premium organic coconuts sourced sustainably from Nagercoil coastal farms,
+                    serving Chennai and Nagercoil.</p>
+                <div class="footer-socials">
+                    <a href="https://wa.me/918778093735?text=Hi,%20I%20would%20like%20to%20know%20more%20about%20your%20services."
+                        target="_blank" aria-label="WhatsApp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <h4>CATEGORIES</h4>
+                <a href="#shop">Fresh Tender Coconuts</a>
+                <a href="#shop">Extra Virgin Oils</a>
+                <a href="#shop">Coconut Shell Crafts</a>
+            </div>
+
+            <div class="footer-links">
+                <h4>REGIONS</h4>
+                <a href="#contact">Chennai Delivery Zone</a>
+                <a href="#contact">Nagercoil Sourcing Line</a>
+            </div>
+
+            <div class="footer-newsletter">
+                <h4>SUBSCRIBE TO HARVEST UPDATES</h4>
+                <p>Stay updated when next premium organic batches arrive.</p>
+                <form class="newsletter-form"
+                    onsubmit="event.preventDefault(); alert('Subscribed for Aura Coco harvest schedules!');">
+                    <input type="email" placeholder="Enter your email" required>
+                    <button type="submit" aria-label="Subscribe"><i class="fa-solid fa-arrow-right-long"></i></button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 AURA COCO. Powered by organic farms of Nagercoil. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="app.js"></script>
+</body>
+
+</html>

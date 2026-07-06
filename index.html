@@ -106,6 +106,7 @@
         <div class="mobile-nav-links">
             <a href="#home" class="mobile-nav-link">Home</a>
             <a href="#shop" class="mobile-nav-link">Coconuts</a>
+            <a href="#shop" class="mobile-nav-link" id="mobile-nav-medicine-link">Medicines (50% Off)</a>
             <a href="#about" class="mobile-nav-link">Our Source</a>
             <a href="#blog" class="mobile-nav-link">Sourcing Diary</a>
             <a href="#contact" class="mobile-nav-link">Order/Contact</a>
@@ -166,6 +167,7 @@
                 <button class="filter-tag" data-category="raw">Fresh Coconuts</button>
                 <button class="filter-tag" data-category="processed">Coconut Oils & Food</button>
                 <button class="filter-tag" data-category="crafts">Artisanal Crafts</button>
+                <button class="filter-tag" data-category="medicine">Medicines (50% Off)</button>
             </div>
 
             <div class="sorting-controls">
@@ -193,7 +195,7 @@
             <div class="about-image-wrapper">
                 <video autoplay loop muted playsinline class="about-video-loop">
                     <source
-                        src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-waves-splashing-on-a-sandy-beach-40176-large.mp4"
+                        src="images/mixkit-brightly-coloured-tropical-fish-swims-up-close-to-camera-on-44974-hd-ready (1).mp4"
                         type="video/mp4">
                 </video>
                 <div class="about-img-overlay"></div>
@@ -276,7 +278,7 @@
                         <i class="fa-solid fa-location-dot"></i>
                         <div>
                             <h4>Chennai Head Hub</h4>
-                            <p>Adyar & ECR Delivery Line, Chennai</p>
+                            <p>cassuranian drive neelankarai paniyur chennai & ECR Delivery Line, Chennai</p>
                         </div>
                     </div>
                     <div class="contact-item">
@@ -400,7 +402,7 @@
                 <h4>REGIONS & ADMIN</h4>
                 <a href="#contact">Chennai Delivery Zone</a>
                 <a href="#contact">Nagercoil Sourcing Line</a>
-                <a href="/admin.html" style="margin-top: 0.5rem; display: inline-block; opacity: 0.7;"><i class="fa-solid fa-lock"></i> Admin Dashboard</a>
+               
             </div>
 
             <div class="footer-newsletter">
@@ -415,8 +417,63 @@
         </div>
         <div class="footer-bottom">
             <p>&copy; 2026 AURA COCO. Powered by organic farms of Nagercoil. All rights reserved.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem; opacity: 0.8;">Developed by <strong style="color: rgb(255, 255, 255);">Manikandan K S - Full Stack Developer</strong></p>
         </div>
     </footer>
+
+    <!-- Floating Chatbot Widget (CocoBot) -->
+    <div class="chatbot-container" id="chatbot-container">
+        <!-- Chat Button / FAB -->
+        <button class="chatbot-fab" id="chatbot-fab" aria-label="Open Chatbot">
+            <i class="fa-solid fa-comments"></i>
+            <span class="chatbot-fab-tooltip">Chat with Aura Bot</span>
+        </button>
+
+        <!-- Chat Window -->
+        <div class="chatbot-window" id="chatbot-window">
+            <!-- Chat Header -->
+            <div class="chatbot-header">
+                <div class="chatbot-header-info">
+                    <div class="chatbot-avatar">
+                        <i class="fa-solid fa-robot"></i>
+                        <span class="chatbot-status-indicator"></span>
+                    </div>
+                    <div>
+                        <h4 class="chatbot-name">AURA Bot</h4>
+                        <span class="chatbot-status-text">Online • Aura Coco Assistant</span>
+                    </div>
+                </div>
+                <button class="chatbot-close-btn" id="chatbot-close-btn" aria-label="Close Chatbot">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chatbot-messages" id="chatbot-messages">
+                <!-- Messages will be dynamically injected here -->
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="chatbot-typing-indicator" id="chatbot-typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <!-- Quick Suggestions / Replies -->
+            <div class="chatbot-suggestions" id="chatbot-suggestions">
+                <!-- Suggestion chips will be injected here -->
+            </div>
+
+            <!-- Chat Input Form -->
+            <form class="chatbot-input-form" id="chatbot-input-form">
+                <input type="text" class="chatbot-input" id="chatbot-input" placeholder="Type your message..." autocomplete="off" required>
+                <button type="submit" class="chatbot-send-btn" id="chatbot-send-btn" aria-label="Send Message">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- Razorpay Checkout SDK -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>

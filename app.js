@@ -2,7 +2,7 @@
 const PRODUCTS = [
     {
         id: 13,
-        name: "OFFICE RUBBER ERASER",
+        name: "PEN",
         category: "crafts",
         price: 1.00,
         badge: "Essential",
@@ -15,9 +15,9 @@ const PRODUCTS = [
     },
     {
         id: 14,
-        name: "PREMIUM A4 SHEET",
+        name: "LED LIGHT",
         category: "crafts",
-        price: 1.00,
+        price: 450.00,
         badge: "Stationery",
         description: "High brightness 75GSM white A4 paper sheet, perfect for office printing and sketching.",
         sizes: ["Single Pack"],
@@ -36,8 +36,7 @@ const PRODUCTS = [
         sizes: ["Standard Box", "Large Box (12 pcs)"],
         colors: ["#ffffff"],
         images: [
-            "https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=600&auto=format&fit=crop&q=60",
-            "https://images.unsplash.com/photo-1543218024-57a70143c369?w=600&auto=format&fit=crop&q=60"
+            "https://6a4b7b721e75414caa998993.imgix.net/sandbox/Screenshot%202026-07-06%20153121.png"
         ]
     },
     {
@@ -50,16 +49,16 @@ const PRODUCTS = [
         sizes: ["500ml", "1 Litre"],
         colors: ["#ffffff"],
         images: [
-            "https://images.unsplash.com/photo-1618897996318-5a901fa6ca71?w=600&auto=format&fit=crop&q=60",
-            "https://images.unsplash.com/photo-1506224477000-07aa8a76be89?w=600&auto=format&fit=crop&q=60"
+            "https://6a4b7b721e75414caa998993.imgix.net/sandbox/Screenshot%202026-07-06%20161323.png",
+            "https://6a4b7b721e75414caa998993.imgix.net/sandbox/Screenshot%25202026-07-06%2520154252.png"
         ]
     },
     {
         id: 3,
-        name: "ROYAL KING TENDER COCONUT",
+        name: "BANANA",
         category: "raw",
         price: 65.00,
-        badge: "Premium Sweet",
+        badge: "FRUITS",
         description: "The famous orange-skin Sevvilani (King Coconut). Renowned for its rich nutrient profile and exceptionally high sugar-water concentration. Sweetest tender coconut from Nagercoil.",
         sizes: ["Single Piece", "Pack of 3"],
         colors: ["#ffa500"],
@@ -187,6 +186,19 @@ const PRODUCTS = [
         images: [
             "images/jackfruit.png"
         ]
+    },
+    {
+        id: 15,
+        name: "ALL MEDICINES AVAILABLE",
+        category: "medicine",
+        price: 0.00,
+        badge: "50% OFFER",
+        description: "Get all medicines with flat 50% discount. Enter your medicine details and phone number below to order directly. We will contact you immediately.",
+        sizes: ["Single Pack"],
+        colors: ["#ffffff"],
+        images: [
+            "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?w=600&auto=format&fit=crop&q=60"
+        ]
     }
 ];
 
@@ -211,7 +223,7 @@ const API_BASE_URL = window.location.hostname === 'localhost' || window.location
 // EmailJS Configuration
 const EMAILJS_CONFIG = {
     serviceId: 'service_4v90p4q',
-    templateId: 'aqfw1st', // EmailJS Template ID
+    templateId: 'template_d5ih6mv', // EmailJS Template ID
     publicKey: 'Q462ZGqIi5J63iocg'      // Replace with your EmailJS Public Key
 };
 
@@ -372,6 +384,45 @@ function registerEventListeners() {
             dom.orderInquiryForm.reset();
         });
     }
+
+    // Redirect / Scroll to Medicine form logic
+    const handleMedicineRedirect = () => {
+        state.filters.category = 'medicine';
+        document.querySelectorAll('.filter-tag').forEach(tag => {
+            if (tag.dataset.category === 'medicine') {
+                tag.classList.add('active');
+            } else {
+                tag.classList.remove('active');
+            }
+        });
+        filterAndRenderProducts();
+        setTimeout(() => {
+            const productsGrid = document.getElementById('products-grid');
+            if (productsGrid) {
+                productsGrid.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => {
+                    const medInput = document.querySelector('.med-details-input');
+                    if (medInput) medInput.focus();
+                }, 800);
+            }
+        }, 100);
+    };
+
+    const navMedLink = document.getElementById('nav-medicine-link');
+    if (navMedLink) {
+        navMedLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleMedicineRedirect();
+        });
+    }
+
+    const mobileNavMedLink = document.getElementById('mobile-nav-medicine-link');
+    if (mobileNavMedLink) {
+        mobileNavMedLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleMedicineRedirect();
+        });
+    }
 }
 
 // Navbar scroll logic (hides on scroll down, reveals on scroll up)
@@ -396,6 +447,38 @@ function toggleSearch() {
     dom.searchDropdown.classList.toggle('open');
     if (dom.searchDropdown.classList.contains('open')) {
         dom.searchInput.focus();
+    }
+}
+
+// Handle Medicine Inquiry Submission
+function sendMedicineInquiry(details, phone) {
+    const msg = `Medicine Request Details: ${details}\nContact Number: ${phone}`;
+    
+    // Submit using EmailJS if configured
+    if (typeof emailjs !== 'undefined' && EMAILJS_CONFIG.publicKey !== 'YOUR_PUBLIC_KEY') {
+        showToast("Sending request...");
+        emailjs.send(
+            EMAILJS_CONFIG.serviceId,
+            EMAILJS_CONFIG.templateId,
+            {
+                from_name: "Medicine Customer",
+                name: "Medicine Customer",
+                phone: phone,
+                phone_number: phone,
+                school: "Medicine Request",
+                role: "Customer",
+                message: msg,
+                title: `Medicine 50% Off Request - ${phone}`
+            },
+            EMAILJS_CONFIG.publicKey
+        ).then(() => {
+            showToast(`Medicine request sent successfully! We will contact you soon.`);
+        }).catch((error) => {
+            console.error('EmailJS Error:', error);
+            showToast(`Medicine request received! We will contact you soon at ${phone}.`);
+        });
+    } else {
+        showToast(`Medicine request received! We will contact you soon at ${phone}.`);
     }
 }
 
@@ -424,43 +507,90 @@ function renderProducts() {
             card.classList.add('out-of-stock-card');
         }
 
-        card.innerHTML = `
-            <div class="product-media-wrapper">
-                ${isOutOfStock ? `<span class="product-badge" style="background: #ef4444; color: #fff;">SOLD OUT</span>` : (product.badge ? `<span class="product-badge">${product.badge}</span>` : '')}
-                <img src="${product.images[0]}" alt="${product.name}" class="product-img main-img" loading="lazy" style="${isOutOfStock ? 'filter: grayscale(0.8) opacity(0.6);' : ''}">
-                <img src="${product.images[1] || product.images[0]}" alt="${product.name}" class="product-img alt-img" loading="lazy" style="${isOutOfStock ? 'filter: grayscale(0.8) opacity(0.6);' : ''}">
-                <div class="product-card-actions">
-                    <button class="card-action-btn view-details" data-id="${product.id}" aria-label="View Details">
-                        <i class="fa-solid fa-expand"></i>
-                    </button>
-                    <button class="card-action-btn quick-add" ${isOutOfStock ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''} data-id="${product.id}" aria-label="Quick Add to Bag">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
+        if (product.id === 15) {
+            card.innerHTML = `
+                <div class="product-media-wrapper">
+                    ${product.badge ? `<span class="product-badge" style="background: #e11d48; color: #fff;">${product.badge}</span>` : ''}
+                    <img src="${product.images[0]}" alt="${product.name}" class="product-img main-img" loading="lazy">
+                    <img src="${product.images[1] || product.images[0]}" alt="${product.name}" class="product-img alt-img" loading="lazy">
                 </div>
-            </div>
-            <div class="product-info">
-                <span class="product-category">${product.category}</span>
-                <h3 class="product-name">${product.name}</h3>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; width: 100%;">
-                    <span class="product-price" style="margin-top: 0;">₹${product.price.toFixed(2)}</span>
-                    <button class="btn-buy-now" ${isOutOfStock ? 'disabled style="background: #4b5563; color: #9ca3af; cursor: not-allowed;"' : 'style="background: #22c55e; color: #0b130e; cursor: pointer;"'} data-id="${product.id}">
-                        ${isOutOfStock ? 'SOLD OUT' : 'BUY <i class="fa-solid fa-bolt"></i>'}
-                    </button>
+                <div class="product-info" style="padding: 1.25rem; display: flex; flex-direction: column; height: 100%;">
+                    <span class="product-category" style="color: #e11d48; font-weight: bold; text-transform: uppercase;">${product.category}</span>
+                    <h3 class="product-name" style="margin-top: 0.25rem; font-size: 1.1rem; line-height: 1.4;">${product.name}</h3>
+                    <p style="font-size: 0.85rem; color: var(--fg-secondary); margin: 0.5rem 0 1rem 0;">${product.description}</p>
+                    
+                    <form class="med-inquiry-form" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: auto; width: 100%;">
+                        <button type="submit" class="btn-submit-med" style="width: 100%; background: #e11d48; color: #ffffff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 0.9rem;">
+                            Submit Request (50% Off)
+                        </button>
+                    </form>
                 </div>
-            </div>
-        `;
-        
-        // Event handlers for action items
-        card.querySelector('.view-details').addEventListener('click', () => openProductModal(product.id));
-        if (!isOutOfStock) {
-            card.querySelector('.quick-add').addEventListener('click', (e) => {
-                e.stopPropagation();
-                addToCart(product.id, product.sizes[0], product.colors[0]);
+            `;
+            
+            card.querySelector('.med-inquiry-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Populate the contact form fields
+                const orderMessageInput = document.getElementById('order-message');
+                
+                if (orderMessageInput) {
+                    orderMessageInput.value = "Medicine Request (50% Off): ";
+                }
+                
+                // Scroll to the contact form section
+                const contactSection = document.getElementById('contact');
+                if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: 'smooth' });
+                }
+                
+                // Focus the message input field in the contact form
+                if (orderMessageInput) {
+                    setTimeout(() => {
+                        orderMessageInput.focus();
+                        const len = orderMessageInput.value.length;
+                        orderMessageInput.setSelectionRange(len, len);
+                    }, 800);
+                }
             });
-            card.querySelector('.btn-buy-now').addEventListener('click', (e) => {
-                e.stopPropagation();
-                checkoutProductDirectly(product.id);
-            });
+        } else {
+            card.innerHTML = `
+                <div class="product-media-wrapper">
+                    ${isOutOfStock ? `<span class="product-badge" style="background: #ef4444; color: #fff;">SOLD OUT</span>` : (product.badge ? `<span class="product-badge">${product.badge}</span>` : '')}
+                    <img src="${product.images[0]}" alt="${product.name}" class="product-img main-img" loading="lazy" style="${isOutOfStock ? 'filter: grayscale(0.8) opacity(0.6);' : ''}">
+                    <img src="${product.images[1] || product.images[0]}" alt="${product.name}" class="product-img alt-img" loading="lazy" style="${isOutOfStock ? 'filter: grayscale(0.8) opacity(0.6);' : ''}">
+                    <div class="product-card-actions">
+                        <button class="card-action-btn view-details" data-id="${product.id}" aria-label="View Details">
+                            <i class="fa-solid fa-expand"></i>
+                        </button>
+                        <button class="card-action-btn quick-add" ${isOutOfStock ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''} data-id="${product.id}" aria-label="Quick Add to Bag">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <span class="product-category">${product.category}</span>
+                    <h3 class="product-name">${product.name}</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; width: 100%;">
+                        <span class="product-price" style="margin-top: 0;">₹${product.price.toFixed(2)}</span>
+                        <button class="btn-buy-now" ${isOutOfStock ? 'disabled style="background: #4b5563; color: #9ca3af; cursor: not-allowed;"' : 'style="background: #22c55e; color: #0b130e; cursor: pointer;"'} data-id="${product.id}">
+                            ${isOutOfStock ? 'SOLD OUT' : 'BUY <i class="fa-solid fa-bolt"></i>'}
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Event handlers for action items
+            card.querySelector('.view-details').addEventListener('click', () => openProductModal(product.id));
+            if (!isOutOfStock) {
+                card.querySelector('.quick-add').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    addToCart(product.id, product.sizes[0], product.colors[0]);
+                });
+                card.querySelector('.btn-buy-now').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    checkoutProductDirectly(product.id);
+                });
+            }
         }
         
         dom.productsGrid.appendChild(card);
@@ -952,4 +1082,266 @@ async function checkoutProductDirectly(productId) {
 }
 
 // Start Application on Load
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+    init();
+    initChatbot();
+});
+
+/* ==========================================
+   CHATBOT WIDGET LOGIC (COCOBOT)
+   ========================================== */
+function initChatbot() {
+    const container = document.getElementById('chatbot-container');
+    const fab = document.getElementById('chatbot-fab');
+    const closeBtn = document.getElementById('chatbot-close-btn');
+    const messagesContainer = document.getElementById('chatbot-messages');
+    const inputForm = document.getElementById('chatbot-input-form');
+    const inputField = document.getElementById('chatbot-input');
+    const suggestionsContainer = document.getElementById('chatbot-suggestions');
+    const typingIndicator = document.getElementById('chatbot-typing-indicator');
+
+    if (!container || !fab || !closeBtn || !messagesContainer || !inputForm || !inputField) {
+        console.warn('Chatbot components missing from the DOM.');
+        return;
+    }
+
+    let botGreetingSent = false;
+
+    // Toggle Chat Window
+    fab.addEventListener('click', () => {
+        container.classList.toggle('active');
+        if (container.classList.contains('active')) {
+            inputField.focus();
+            if (!botGreetingSent) {
+                sendBotGreeting();
+            }
+        }
+    });
+
+    closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        container.classList.remove('active');
+    });
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            container.classList.remove('active');
+        }
+    });
+
+    // Send message on submit
+    inputForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = inputField.value.trim();
+        if (!text) return;
+
+        appendMessage(text, 'user');
+        inputField.value = '';
+        
+        showTypingIndicator();
+        setTimeout(() => {
+            hideTypingIndicator();
+            generateBotResponse(text);
+        }, 1000);
+    });
+
+    // Send initial greeting
+    function sendBotGreeting() {
+        botGreetingSent = true;
+        showTypingIndicator();
+        setTimeout(() => {
+            hideTypingIndicator();
+            appendMessage("Hello! Welcome to **Aura Coco** 🌴 I'm your organic assistant. How can I help you today?", 'bot');
+            renderSuggestions([
+                { text: 'See Products 🥥', value: 'see_products' },
+                { text: 'Delivery & Sourcing 📍', value: 'delivery_info' },
+                { text: 'How to Order? 🛒', value: 'how_to_order' },
+                { text: 'Contact Support 📞', value: 'contact_support' }
+            ]);
+        }, 800);
+    }
+
+    // Append message to history
+    function appendMessage(text, sender, isHtml = false) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `chatbot-msg ${sender}`;
+        
+        if (isHtml) {
+            msgDiv.innerHTML = text;
+        } else {
+            // Basic markdown bold parsing (**text**)
+            const formattedText = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
+            msgDiv.innerHTML = formattedText;
+        }
+        
+        messagesContainer.appendChild(msgDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // Show/Hide typing indicator
+    function showTypingIndicator() {
+        typingIndicator.style.display = 'flex';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function hideTypingIndicator() {
+        typingIndicator.style.display = 'none';
+    }
+
+    // Render quick suggestion chips
+    function renderSuggestions(options) {
+        suggestionsContainer.innerHTML = '';
+        options.forEach(opt => {
+            const chip = document.createElement('button');
+            chip.className = 'chatbot-chip';
+            chip.textContent = opt.text;
+            chip.addEventListener('click', () => {
+                appendMessage(opt.text, 'user');
+                showTypingIndicator();
+                suggestionsContainer.innerHTML = '';
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    handleSuggestionClick(opt.value);
+                }, 1000);
+            });
+            suggestionsContainer.appendChild(chip);
+        });
+    }
+
+    // Handle suggestion action clicks
+    function handleSuggestionClick(value) {
+        switch(value) {
+            case 'see_products':
+                appendMessage("Here are some of our premium organic products direct from Kesavanputhoor, Nagercoil:", 'bot');
+                // Render top 3 featured products
+                const featured = PRODUCTS.filter(p => p.id === 1 || p.id === 2 || p.id === 4);
+                featured.forEach(p => {
+                    appendProductCard(p);
+                });
+                break;
+            case 'delivery_info':
+                appendMessage("🌴 We source our premium coconuts directly from the groves of **Kesavanputhoor, Nagercoil**.\n\n🚚 We deliver across **Chennai** and **Nagercoil**.\n\n✨ Shipping is **free** for orders above ₹500!", 'bot');
+                break;
+            case 'how_to_order':
+                appendMessage("Ordering is quick and secure:\n1️⃣ Find your favorite organic items on the page.\n2️⃣ Click **BUY** or the **plus (+)** icon to add to your bag.\n3️⃣ Open the shopping bag (top-right icon) and click **PLACE SECURE ORDER**.\n4️⃣ Checkout safely via UPI, Card, or NetBanking using Razorpay!", 'bot');
+                break;
+            case 'contact_support':
+                appendMessage("Need custom order help or corporate inquiries?\n\n💬 Chat with us on **WhatsApp**: [+91 8778093735](https://wa.me/918778093735)\n\n📬 Or scroll down to fill out our order inquiry form and we'll reply instantly!", 'bot');
+                break;
+        }
+        
+        // Show main options menu chips again after response
+        setTimeout(() => {
+            renderSuggestions([
+                { text: 'See Products 🥥', value: 'see_products' },
+                { text: 'Delivery & Sourcing 📍', value: 'delivery_info' },
+                { text: 'How to Order? 🛒', value: 'how_to_order' },
+                { text: 'Contact Support 📞', value: 'contact_support' }
+            ]);
+        }, 1500);
+    }
+
+    // Render small interactive product card inside the chat
+    function appendProductCard(product) {
+        const cardHtml = `
+            <div class="chatbot-product-card">
+                <img src="${product.images[0]}" alt="${product.name}" class="chatbot-product-img">
+                <div class="chatbot-product-info">
+                    <span class="chatbot-product-name">${product.name}</span>
+                    <span class="chatbot-product-price">₹${product.price.toFixed(2)}</span>
+                </div>
+                <button class="chatbot-product-btn" data-id="${product.id}">Buy Now</button>
+            </div>
+        `;
+        appendMessage(cardHtml, 'bot', true);
+        
+        // Add event listener to the buy now button inside chat message
+        const lastMsg = messagesContainer.lastElementChild;
+        const buyBtn = lastMsg.querySelector('.chatbot-product-btn');
+        if (buyBtn) {
+            buyBtn.addEventListener('click', () => {
+                addToCart(product.id, product.sizes[0], product.colors[0]);
+                openCart();
+            });
+        }
+    }
+
+    // AI Keyword Matching Bot Response
+    function generateBotResponse(userInput) {
+        const text = userInput.toLowerCase();
+
+        // 1. Check for product search queries
+        let matchedProducts = [];
+        PRODUCTS.forEach(p => {
+            if (text.includes(p.name.toLowerCase()) || text.includes(p.category.toLowerCase())) {
+                matchedProducts.push(p);
+            }
+        });
+
+        // Search broad terms
+        if (matchedProducts.length === 0) {
+            if (text.includes('coconut') || text.includes('coco') || text.includes('tender')) {
+                matchedProducts = PRODUCTS.filter(p => p.category === 'raw' || p.category === 'processed');
+            } else if (text.includes('oil') || text.includes('virgin')) {
+                matchedProducts = PRODUCTS.filter(p => p.name.toLowerCase().includes('oil'));
+            } else if (text.includes('craft') || text.includes('saree') || text.includes('bowl')) {
+                matchedProducts = PRODUCTS.filter(p => p.category === 'crafts');
+            } else if (text.includes('banana') || text.includes('fruit') || text.includes('jackfruit')) {
+                matchedProducts = PRODUCTS.filter(p => p.name.toLowerCase().includes('banana') || p.name.toLowerCase().includes('jackfruit'));
+            }
+        }
+
+        // Limit matches to 3 to keep it clean
+        matchedProducts = matchedProducts.slice(0, 3);
+
+        if (matchedProducts.length > 0) {
+            appendMessage(`I found these matching products in our harvest collection:`, 'bot');
+            matchedProducts.forEach(p => appendProductCard(p));
+            return;
+        }
+
+        // 2. Keyword Responses
+        if (text.includes('hello') || text.includes('hi') || text.includes('hey') || text.includes('greetings')) {
+            appendMessage("Hey there! Hope you are having a wonderful day. How can I assist you with Aura Coco today?", 'bot');
+        } 
+        else if (text.includes('price') || text.includes('cost') || text.includes('rate') || text.includes('how much')) {
+            appendMessage("Our premium tender coconuts start at **₹27**, cold pressed oils at **₹320**, and artisanal shell crafts at **₹290**. Try typing a specific product name to see details!", 'bot');
+        }
+        else if (text.includes('delivery') || text.includes('ship') || text.includes('chennai') || text.includes('nagercoil') || text.includes('where')) {
+            appendMessage("We offer fast door-step delivery in **Chennai** and **Nagercoil**. Shipping is **free** for orders over ₹500, else standard local shipping applies.", 'bot');
+        }
+        else if (text.includes('payment') || text.includes('pay') || text.includes('razorpay') || text.includes('upi') || text.includes('card')) {
+            appendMessage("Payments are fully secured by **Razorpay** 💳. We accept UPI, GPay, Credit/Debit cards, and Net Banking directly at checkout.", 'bot');
+        }
+        else if (text.includes('contact') || text.includes('phone') || text.includes('whatsapp') || text.includes('support')) {
+            appendMessage("You can message our dispatch support line on **WhatsApp** at [+91 8778093735](https://wa.me/918778093735) or use the contact form at the bottom of the page.", 'bot');
+        }
+        else if (text.includes('medicine') || text.includes('offer') || text.includes('discount')) {
+            const medProduct = PRODUCTS.find(p => p.id === 15);
+            if (medProduct) {
+                appendMessage("Yes! We have a special Flat 50% discount on medicine orders. You can request details directly here:", 'bot');
+                appendProductCard(medProduct);
+            } else {
+                appendMessage("We run seasonal discounts on our organic batches. Keep an eye on our homepage badge alerts!", 'bot');
+            }
+        }
+        else {
+            appendMessage("I didn't quite catch that. Try asking about **products**, **pricing**, **delivery regions**, or **payments**. Alternatively, check the options below:", 'bot');
+        }
+
+        // Always show quick suggestions for next action
+        setTimeout(() => {
+            renderSuggestions([
+                { text: 'See Products 🥥', value: 'see_products' },
+                { text: 'Delivery & Sourcing 📍', value: 'delivery_info' },
+                { text: 'How to Order? 🛒', value: 'how_to_order' },
+                { text: 'Contact Support 📞', value: 'contact_support' }
+            ]);
+        }, 1200);
+    }
+}
+

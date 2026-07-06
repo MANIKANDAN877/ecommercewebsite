@@ -284,8 +284,11 @@ async function init() {
 
 // Event Listeners Registration
 function registerEventListeners() {
-    // Navbar Scroll Effect
-    window.addEventListener('scroll', handleNavbarScroll);
+    // Navbar Scroll & Parallax Effect
+    window.addEventListener('scroll', () => {
+        handleNavbarScroll();
+        handleParallaxScroll();
+    });
 
     // Cart Drawer Toggle
     dom.cartBtn.addEventListener('click', openCart);
@@ -440,6 +443,23 @@ function handleNavbarScroll() {
         dom.navbar.classList.remove('scroll-down');
     }
     lastScrollY = window.scrollY;
+}
+
+// Parallax scroll effect for about section video loop
+function handleParallaxScroll() {
+    const video = document.querySelector('.about-video-loop');
+    if (video) {
+        const speed = 0.08;
+        const rect = video.parentElement.getBoundingClientRect();
+        const top = rect.top;
+        const visibleHeight = window.innerHeight;
+        
+        if (top < visibleHeight && rect.bottom > 0) {
+            // Translate the video relative to scroll position
+            const offset = (top - visibleHeight) * speed;
+            video.style.transform = `translateY(${offset}px) scale(1.15)`;
+        }
+    }
 }
 
 // Search dropdown logic

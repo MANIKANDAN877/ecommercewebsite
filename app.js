@@ -1156,6 +1156,7 @@ function initChatbot() {
             renderSuggestions([
                 { text: 'See Products 🥥', value: 'see_products' },
                 { text: 'Delivery & Sourcing 📍', value: 'delivery_info' },
+                { text: 'Delivery Date 📅', value: 'delivery_date' },
                 { text: 'How to Order? 🛒', value: 'how_to_order' },
                 { text: 'Contact Support 📞', value: 'contact_support' }
             ]);
@@ -1231,7 +1232,18 @@ function initChatbot() {
                 const options = { day: 'numeric', month: 'long', year: 'numeric' };
                 const formatted4 = date4.toLocaleDateString('en-IN', options);
                 const formatted5 = date5.toLocaleDateString('en-IN', options);
-                appendMessage(`🌴 We source our premium coconuts directly from the groves of **Kesavanputhoor, Nagercoil**.\n\n🚚 We deliver across **Chennai** and **Nagercoil**.\n\n📅 If you order today, you will receive it in **4-5 days** (between **${formatted4}** and **${formatted5}**).\n\n✨ Shipping is **free** for orders above ₹500!`, 'bot');
+                appendMessage(`🌴 We source our premium coconuts directly from the groves of **Kesavanputhoor, Nagercoil**.\n\n🚚 We deliver across **Chennai** and **Nagercoil**.\n\n📅 Standard shipping is **free** for orders above ₹500!`, 'bot');
+                break;
+            }
+            case 'delivery_date': {
+                const date4 = new Date();
+                date4.setDate(date4.getDate() + 4);
+                const date5 = new Date();
+                date5.setDate(date5.getDate() + 5);
+                const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                const formatted4 = date4.toLocaleDateString('en-IN', options);
+                const formatted5 = date5.toLocaleDateString('en-IN', options);
+                appendMessage(`📅 If you order today, your expected delivery date is between **${formatted4}** and **${formatted5}** (within 4–5 days).`, 'bot');
                 break;
             }
             case 'how_to_order':
@@ -1247,6 +1259,7 @@ function initChatbot() {
             renderSuggestions([
                 { text: 'See Products 🥥', value: 'see_products' },
                 { text: 'Delivery & Sourcing 📍', value: 'delivery_info' },
+                { text: 'Delivery Date 📅', value: 'delivery_date' },
                 { text: 'How to Order? 🛒', value: 'how_to_order' },
                 { text: 'Contact Support 📞', value: 'contact_support' }
             ]);
@@ -1353,6 +1366,7 @@ function initChatbot() {
             renderSuggestions([
                 { text: 'See Products 🥥', value: 'see_products' },
                 { text: 'Delivery & Sourcing 📍', value: 'delivery_info' },
+                { text: 'Delivery Date 📅', value: 'delivery_date' },
                 { text: 'How to Order? 🛒', value: 'how_to_order' },
                 { text: 'Contact Support 📞', value: 'contact_support' }
             ]);

@@ -1105,7 +1105,9 @@ async function checkoutProductDirectly(productId) {
 document.addEventListener('DOMContentLoaded', () => {
     init();
     initChatbot();
+    setTimeout(handleParallaxScroll, 150);
 });
+window.addEventListener('load', handleParallaxScroll);
 
 /* ==========================================
    CHATBOT WIDGET LOGIC (COCOBOT)

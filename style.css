@@ -1634,4 +1634,8 @@ button {
     .footer-container {
         grid-template-columns: 1fr;
     }
+    .product-card-actions {
+        bottom: 0 !important;
+        background: linear-gradient(to top, rgba(18, 18, 22, 0.95), rgba(18, 18, 22, 0.3)) !important;
+    }
 }

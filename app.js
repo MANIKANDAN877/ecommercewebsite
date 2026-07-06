@@ -415,8 +415,8 @@ function renderProducts() {
     state.products.forEach(product => {
         // Find stock inventory level
         const inventoryItem = state.inventory.find(inv => inv.id === product.id);
-        const stock = inventoryItem ? inventoryItem.stock : 0;
-        const isOutOfStock = stock <= 0;
+        const stock = inventoryItem ? inventoryItem.stock : 100;
+        const isOutOfStock = false;
 
         const card = document.createElement('article');
         card.className = 'product-card';
@@ -617,8 +617,8 @@ function openProductModal(productId) {
 
     // Get stock level
     const inventoryItem = state.inventory.find(i => i.id === product.id);
-    const stock = inventoryItem ? inventoryItem.stock : 0;
-    const isOutOfStock = stock <= 0;
+    const stock = inventoryItem ? inventoryItem.stock : 100;
+    const isOutOfStock = false;
 
     let selectedSize = product.sizes[0];
     let selectedColor = product.colors[0];

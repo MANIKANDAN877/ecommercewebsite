@@ -19,14 +19,13 @@ app.use(express.static(__dirname));
 // Initialize Razorpay client
 let razorpay;
 try {
-    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-        console.error('CRITICAL ERROR: Razorpay keys are missing from environment variables.');
-    } else {
-        razorpay = new Razorpay({
-            key_id: process.env.RAZORPAY_KEY_ID,
-            key_secret: process.env.RAZORPAY_KEY_SECRET
-        });
-    }
+    const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_live_T9w63HFfZjlB4g';
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || 'hygLqS6fYCjpK54HFb9SQtCV';
+    
+    razorpay = new Razorpay({
+        key_id: keyId,
+        key_secret: keySecret
+    });
 } catch (error) {
     console.error('Failed to initialize Razorpay SDK:', error);
 }
@@ -57,10 +56,8 @@ function saveInventory(inventory) {
 
 // Endpoint to fetch public configurations safely
 app.get('/api/config', (req, res) => {
-    if (!process.env.RAZORPAY_KEY_ID) {
-        return res.status(500).json({ error: 'Razorpay Key ID is not configured on the server.' });
-    }
-    res.json({ keyId: process.env.RAZORPAY_KEY_ID });
+    const keyId = process.env.RAZORPAY_KEY_ID || 'rzp_live_T9w63HFfZjlB4g';
+    res.json({ keyId });
 });
 
 // Endpoint to get inventory stock levels
@@ -135,10 +132,7 @@ app.post('/api/verify-payment', (req, res) => {
             return res.status(400).json({ error: 'Missing required signature verification fields.' });
         }
 
-        const secret = process.env.RAZORPAY_KEY_SECRET;
-        if (!secret) {
-            return res.status(500).json({ error: 'Razorpay Key Secret is not configured on the server.' });
-        }
+        const secret = process.env.RAZORPAY_KEY_SECRET || 'hygLqS6fYCjpK54HFb9SQtCV';
 
         // Generate expected signature
         const generatedSignature = crypto

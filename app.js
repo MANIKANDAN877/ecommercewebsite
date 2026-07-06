@@ -1223,9 +1223,13 @@ function initChatbot() {
                     appendProductCard(p);
                 });
                 break;
-            case 'delivery_info':
-                appendMessage("🌴 We source our premium coconuts directly from the groves of **Kesavanputhoor, Nagercoil**.\n\n🚚 We deliver across **Chennai** and **Nagercoil**.\n\n✨ Shipping is **free** for orders above ₹500!", 'bot');
+            case 'delivery_info': {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const formattedDate = tomorrow.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+                appendMessage(`🌴 We source our premium coconuts directly from the groves of **Kesavanputhoor, Nagercoil**.\n\n🚚 We deliver across **Chennai** and **Nagercoil**.\n\n📅 If you order today, you will receive it by **${formattedDate}** (within 12–24 hours)!\n\n✨ Shipping is **free** for orders above ₹500!`, 'bot');
                 break;
+            }
             case 'how_to_order':
                 appendMessage("Ordering is quick and secure:\n1️⃣ Find your favorite organic items on the page.\n2️⃣ Click **BUY** or the **plus (+)** icon to add to your bag.\n3️⃣ Open the shopping bag (top-right icon) and click **PLACE SECURE ORDER**.\n4️⃣ Checkout safely via UPI, Card, or NetBanking using Razorpay!", 'bot');
                 break;
@@ -1311,8 +1315,11 @@ function initChatbot() {
         else if (text.includes('price') || text.includes('cost') || text.includes('rate') || text.includes('how much')) {
             appendMessage("Our premium tender coconuts start at **₹27**, cold pressed oils at **₹320**, and artisanal shell crafts at **₹290**. Try typing a specific product name to see details!", 'bot');
         }
-        else if (text.includes('delivery') || text.includes('ship') || text.includes('chennai') || text.includes('nagercoil') || text.includes('where')) {
-            appendMessage("We offer fast door-step delivery in **Chennai** and **Nagercoil**. Shipping is **free** for orders over ₹500, else standard local shipping applies.", 'bot');
+        else if (text.includes('delivery') || text.includes('ship') || text.includes('chennai') || text.includes('nagercoil') || text.includes('where') || text.includes('when') || text.includes('date') || text.includes('day') || text.includes('receive')) {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const formattedDate = tomorrow.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+            appendMessage(`We offer fast door-step delivery in **Chennai** and **Nagercoil**.\n\n📅 If you order today, your delivery will arrive by **${formattedDate}** (within 12–24 hours)!\n\n✨ Shipping is **free** for orders over ₹500, else standard local shipping applies.`, 'bot');
         }
         else if (text.includes('payment') || text.includes('pay') || text.includes('razorpay') || text.includes('upi') || text.includes('card')) {
             appendMessage("Payments are fully secured by **Razorpay** 💳. We accept UPI, GPay, Credit/Debit cards, and Net Banking directly at checkout.", 'bot');

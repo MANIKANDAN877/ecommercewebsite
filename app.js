@@ -266,20 +266,26 @@ async function init() {
         });
     }
 
-    // Fetch product stock inventory from backend
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/products/inventory`);
-        if (response.ok) {
-            state.inventory = await response.json();
-        }
-    } catch (e) {
-        console.error('Failed to fetch product inventory:', e);
-    }
-
+    // Render products instantly on page load
     renderProducts();
     updateCartUI();
     registerEventListeners();
     handleNavbarScroll();
+
+    // Fetch product stock inventory from backend asynchronously in the background
+    // (Prevents blocking page load if Render backend has a cold start delay)
+    fetch(`${API_BASE_URL}/api/products/inventory`)
+        .then(response => {
+            if (response.ok) return response.json();
+            throw new Error('Failed to fetch inventory from server.');
+        })
+        .then(data => {
+            state.inventory = data;
+            renderProducts(); // Re-render once we get updated stock levels
+        })
+        .catch(e => {
+            console.error('Failed to fetch product inventory:', e);
+        });
 }
 
 // Event Listeners Registration

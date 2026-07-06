@@ -1224,10 +1224,14 @@ function initChatbot() {
                 });
                 break;
             case 'delivery_info': {
-                const tomorrow = new Date();
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                const formattedDate = tomorrow.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-                appendMessage(`🌴 We source our premium coconuts directly from the groves of **Kesavanputhoor, Nagercoil**.\n\n🚚 We deliver across **Chennai** and **Nagercoil**.\n\n📅 If you order today, you will receive it by **${formattedDate}** (within 12–24 hours)!\n\n✨ Shipping is **free** for orders above ₹500!`, 'bot');
+                const date4 = new Date();
+                date4.setDate(date4.getDate() + 4);
+                const date5 = new Date();
+                date5.setDate(date5.getDate() + 5);
+                const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                const formatted4 = date4.toLocaleDateString('en-IN', options);
+                const formatted5 = date5.toLocaleDateString('en-IN', options);
+                appendMessage(`🌴 We source our premium coconuts directly from the groves of **Kesavanputhoor, Nagercoil**.\n\n🚚 We deliver across **Chennai** and **Nagercoil**.\n\n📅 If you order today, you will receive it in **4-5 days** (between **${formatted4}** and **${formatted5}**).\n\n✨ Shipping is **free** for orders above ₹500!`, 'bot');
                 break;
             }
             case 'how_to_order':
@@ -1316,10 +1320,14 @@ function initChatbot() {
             appendMessage("Our premium tender coconuts start at **₹27**, cold pressed oils at **₹320**, and artisanal shell crafts at **₹290**. Try typing a specific product name to see details!", 'bot');
         }
         else if (text.includes('delivery') || text.includes('ship') || text.includes('chennai') || text.includes('nagercoil') || text.includes('where') || text.includes('when') || text.includes('date') || text.includes('day') || text.includes('receive')) {
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const formattedDate = tomorrow.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
-            appendMessage(`We offer fast door-step delivery in **Chennai** and **Nagercoil**.\n\n📅 If you order today, your delivery will arrive by **${formattedDate}** (within 12–24 hours)!\n\n✨ Shipping is **free** for orders over ₹500, else standard local shipping applies.`, 'bot');
+            const date4 = new Date();
+            date4.setDate(date4.getDate() + 4);
+            const date5 = new Date();
+            date5.setDate(date5.getDate() + 5);
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            const formatted4 = date4.toLocaleDateString('en-IN', options);
+            const formatted5 = date5.toLocaleDateString('en-IN', options);
+            appendMessage(`We offer door-step delivery in **Chennai** and **Nagercoil**.\n\n📅 If you order today, your delivery will arrive in **4-5 days** (between **${formatted4}** and **${formatted5}**).\n\n✨ Shipping is **free** for orders over ₹500, else standard local shipping applies.`, 'bot');
         }
         else if (text.includes('payment') || text.includes('pay') || text.includes('razorpay') || text.includes('upi') || text.includes('card')) {
             appendMessage("Payments are fully secured by **Razorpay** 💳. We accept UPI, GPay, Credit/Debit cards, and Net Banking directly at checkout.", 'bot');

@@ -78,31 +78,31 @@
             </nav>
 
             <div class="nav-actions">
-                <button class="nav-btn" id="search-toggle-btn" aria-label="Toggle Search">
+                <button class="nav-btn" id="search-toggle-btn" aria-label="Toggle Search" aria-expanded="false" aria-controls="search-dropdown">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
-                <button class="nav-btn cart-trigger" id="cart-btn" aria-label="Open Shopping Cart">
+                <button class="nav-btn cart-trigger" id="cart-btn" aria-label="Open Shopping Cart" aria-expanded="false" aria-controls="cart-drawer">
                     <i class="fa-solid fa-bag-shopping"></i>
                     <span class="cart-badge" id="cart-badge-count">0</span>
                 </button>
-                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle Menu">
+                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobile-nav">
                     <i class="fa-solid fa-bars-staggered"></i>
                 </button>
             </div>
         </div>
 
         <!-- Interactive Search Bar Dropdown -->
-        <div class="search-dropdown" id="search-dropdown">
+        <div class="search-dropdown" id="search-dropdown" role="search">
             <div class="search-wrapper">
-                <input type="text" id="search-input" placeholder="Search premium coconut range..." autocomplete="off">
+                <input type="text" id="search-input" placeholder="Search premium coconut range..." autocomplete="off" aria-label="Search premium coconut range">
                 <button id="search-clear-btn" aria-label="Clear Search"><i class="fa-solid fa-xmark"></i></button>
             </div>
         </div>
     </header>
 
     <!-- Mobile Navigation Drawer -->
-    <div class="mobile-nav" id="mobile-nav">
-        <button class="close-mobile-nav" id="close-mobile-nav-btn"><i class="fa-solid fa-xmark"></i></button>
+    <div class="mobile-nav" id="mobile-nav" role="dialog" aria-modal="true" aria-label="Mobile Navigation Menu">
+        <button class="close-mobile-nav" id="close-mobile-nav-btn" aria-label="Close Menu"><i class="fa-solid fa-xmark"></i></button>
         <div class="mobile-nav-links">
             <a href="#home" class="mobile-nav-link">Home</a>
             <a href="#shop" class="mobile-nav-link">Coconuts</a>
@@ -420,7 +420,7 @@
                 <p>Stay updated when next premium organic batches arrive.</p>
                 <form class="newsletter-form"
                     onsubmit="event.preventDefault(); alert('Subscribed for Aura Coco harvest schedules!');">
-                    <input type="email" placeholder="Enter your email" required>
+                    <input type="email" id="newsletter-email" placeholder="Enter your email" aria-label="Subscribe to email updates" required>
                     <button type="submit" aria-label="Subscribe"><i class="fa-solid fa-arrow-right-long"></i></button>
                 </form>
             </div>

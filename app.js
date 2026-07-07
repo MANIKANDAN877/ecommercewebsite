@@ -216,8 +216,8 @@ let state = {
 
 // Base API URL configuration
 // Replace 'https://auracoco-backend.onrender.com' with your actual Render/Railway backend URL once deployed.
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.') 
-    ? '' 
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')
+    ? ''
     : 'https://auracoco-backend.onrender.com';
 
 // EmailJS Configuration
@@ -246,6 +246,7 @@ const dom = {
     searchClearBtn: document.getElementById('search-clear-btn'),
     categoryFilters: document.getElementById('category-filters'),
     sortSelect: document.getElementById('sort-select'),
+    clearFiltersBtn: document.getElementById('clear-filters-btn'),
     productModal: document.getElementById('product-modal'),
     closeModalBtn: document.getElementById('close-modal-btn'),
     modalBodyContent: document.getElementById('modal-body-content'),
@@ -300,7 +301,7 @@ function registerEventListeners() {
     dom.cartBtn.addEventListener('click', openCart);
     dom.closeCartBtn.addEventListener('click', closeCart);
     dom.cartOverlay.addEventListener('click', closeCart);
-    
+
     // Close Empty Cart Redirect Action
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('close-cart-action')) {
@@ -342,6 +343,28 @@ function registerEventListeners() {
         state.filters.sort = e.target.value;
         filterAndRenderProducts();
     });
+
+    // Clear Filters
+    if (dom.clearFiltersBtn) {
+        dom.clearFiltersBtn.addEventListener('click', () => {
+            state.filters.category = 'all';
+            state.filters.search = '';
+            state.filters.sort = 'default';
+
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                if (tag.dataset.category === 'all') {
+                    tag.classList.add('active');
+                } else {
+                    tag.classList.remove('active');
+                }
+            });
+            if (dom.searchInput) dom.searchInput.value = '';
+            if (dom.sortSelect) dom.sortSelect.value = 'default';
+
+            filterAndRenderProducts();
+            showToast("Filters cleared");
+        });
+    }
 
     // Close Modal Events
     dom.closeModalBtn.addEventListener('click', closeModal);
@@ -459,7 +482,7 @@ function handleParallaxScroll() {
         const rect = video.parentElement.getBoundingClientRect();
         const top = rect.top;
         const visibleHeight = window.innerHeight;
-        
+
         if (top < visibleHeight && rect.bottom > 0) {
             // Translate the video relative to scroll position
             const offset = (top - visibleHeight) * speed;
@@ -479,7 +502,7 @@ function toggleSearch() {
 // Handle Medicine Inquiry Submission
 function sendMedicineInquiry(details, phone) {
     const msg = `Medicine Request Details: ${details}\nContact Number: ${phone}`;
-    
+
     // Submit using EmailJS if configured
     if (typeof emailjs !== 'undefined' && EMAILJS_CONFIG.publicKey !== 'YOUR_PUBLIC_KEY') {
         showToast("Sending request...");
@@ -511,7 +534,7 @@ function sendMedicineInquiry(details, phone) {
 // Render dynamic products grid
 function renderProducts() {
     dom.productsGrid.innerHTML = '';
-    
+
     if (state.products.length === 0) {
         dom.productsGrid.innerHTML = `
             <div class="loading-spinner">
@@ -522,54 +545,43 @@ function renderProducts() {
     }
 
     state.products.forEach(product => {
-        // Find stock inventory level
-        const inventoryItem = state.inventory.find(inv => inv.id === product.id);
-        const stock = inventoryItem ? inventoryItem.stock : 100;
-        const isOutOfStock = false;
-
         const card = document.createElement('article');
         card.className = 'product-card';
-        if (isOutOfStock) {
-            card.classList.add('out-of-stock-card');
-        }
 
         if (product.id === 15) {
             card.innerHTML = `
                 <div class="product-media-wrapper">
                     ${product.badge ? `<span class="product-badge" style="background: #e11d48; color: #fff;">${product.badge}</span>` : ''}
-                    <img src="${product.images[0]}" alt="${product.name}" class="product-img main-img" loading="lazy">
-                    <img src="${product.images[1] || product.images[0]}" alt="${product.name}" class="product-img alt-img" loading="lazy">
+                    <img src="${product.images[0]}" alt="${product.name}" class="product-img" loading="lazy">
                 </div>
-                <div class="product-info" style="padding: 1.25rem; display: flex; flex-direction: column; height: 100%;">
+                <div class="product-info">
                     <span class="product-category" style="color: #e11d48; font-weight: bold; text-transform: uppercase;">${product.category}</span>
-                    <h3 class="product-name" style="margin-top: 0.25rem; font-size: 1.1rem; line-height: 1.4;">${product.name}</h3>
-                    <p style="font-size: 0.85rem; color: var(--fg-secondary); margin: 0.5rem 0 1rem 0;">${product.description}</p>
-                    
-                    <form class="med-inquiry-form" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: auto; width: 100%;">
-                        <button type="submit" class="btn-submit-med" style="width: 100%; background: #e11d48; color: #ffffff; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 0.9rem;">
-                            Submit Request (50% Off)
-                        </button>
-                    </form>
+                    <h3 class="product-name" style="color: var(--fg-primary);">${product.name}</h3>
+                    <p style="font-size: 0.78rem; color: var(--fg-secondary); margin: 4px 0 8px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.6em; max-height: 2.6em; line-height: 1.3;">${product.description}</p>
+                    <div class="product-price-row">
+                        <form class="med-inquiry-form" style="width: 100%; display: block; margin: 0; padding: 0;">
+                            <button type="submit" class="btn-submit-med" style="width: 100%; background: #e11d48; color: #ffffff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: background 0.2s; height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; line-height: 1.2;">
+                                <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Submit Request Now </span>
+                                <span style="font-size: 0.65rem; opacity: 0.95; font-weight: 500;">(50% Off)</span>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             `;
             
             card.querySelector('.med-inquiry-form').addEventListener('submit', (e) => {
                 e.preventDefault();
                 
-                // Populate the contact form fields
                 const orderMessageInput = document.getElementById('order-message');
-                
                 if (orderMessageInput) {
                     orderMessageInput.value = "Medicine Request (50% Off): ";
                 }
                 
-                // Scroll to the contact form section
                 const contactSection = document.getElementById('contact');
                 if (contactSection) {
                     contactSection.scrollIntoView({ behavior: 'smooth' });
                 }
                 
-                // Focus the message input field in the contact form
                 if (orderMessageInput) {
                     setTimeout(() => {
                         orderMessageInput.focus();
@@ -581,44 +593,38 @@ function renderProducts() {
         } else {
             card.innerHTML = `
                 <div class="product-media-wrapper">
-                    ${isOutOfStock ? `<span class="product-badge" style="background: #ef4444; color: #fff;">SOLD OUT</span>` : (product.badge ? `<span class="product-badge">${product.badge}</span>` : '')}
-                    <img src="${product.images[0]}" alt="${product.name}" class="product-img main-img" loading="lazy" style="${isOutOfStock ? 'filter: grayscale(0.8) opacity(0.6);' : ''}">
-                    <img src="${product.images[1] || product.images[0]}" alt="${product.name}" class="product-img alt-img" loading="lazy" style="${isOutOfStock ? 'filter: grayscale(0.8) opacity(0.6);' : ''}">
-                    <div class="product-card-actions">
-                        <button class="card-action-btn view-details" data-id="${product.id}" aria-label="View Details">
-                            <i class="fa-solid fa-expand"></i>
-                        </button>
-                        <button class="card-action-btn quick-add" ${isOutOfStock ? 'disabled style="opacity: 0.3; cursor: not-allowed;"' : ''} data-id="${product.id}" aria-label="Quick Add to Bag">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                    </div>
+                    ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
+                    <img src="${product.images[0]}" alt="${product.name}" class="product-img" loading="lazy">
                 </div>
                 <div class="product-info">
                     <span class="product-category">${product.category}</span>
                     <h3 class="product-name">${product.name}</h3>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; width: 100%;">
-                        <span class="product-price" style="margin-top: 0;">₹${product.price.toFixed(2)}</span>
-                        <button class="btn-buy-now" ${isOutOfStock ? 'disabled style="background: #4b5563; color: #9ca3af; cursor: not-allowed;"' : 'style="background: #22c55e; color: #0b130e; cursor: pointer;"'} data-id="${product.id}">
-                            ${isOutOfStock ? 'SOLD OUT' : 'BUY <i class="fa-solid fa-bolt"></i>'}
+                    <span class="product-price">₹${product.price.toFixed(2)}</span>
+                    <div class="product-price-row">
+                        <button class="btn-buy-now" data-id="${product.id}">
+                            BUY
+                        </button>
+                        <button class="quick-add" data-id="${product.id}" aria-label="Add to harvest box">
+                            <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
                 </div>
             `;
-            
+
             // Event handlers for action items
-            card.querySelector('.view-details').addEventListener('click', () => openProductModal(product.id));
-            if (!isOutOfStock) {
-                card.querySelector('.quick-add').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    addToCart(product.id, product.sizes[0], product.colors[0]);
-                });
-                card.querySelector('.btn-buy-now').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    checkoutProductDirectly(product.id);
-                });
-            }
+            card.querySelector('.quick-add').addEventListener('click', (e) => {
+                e.stopPropagation();
+                addToCart(product.id, product.sizes[0], product.colors[0]);
+            });
+            card.querySelector('.btn-buy-now').addEventListener('click', (e) => {
+                e.stopPropagation();
+                checkoutProductDirectly(product.id);
+            });
+            card.addEventListener('click', () => {
+                openProductModal(product.id);
+            });
         }
-        
+
         dom.productsGrid.appendChild(card);
     });
 }
@@ -721,7 +727,7 @@ function updateCartUI() {
 
     // Render cart items
     dom.cartItemsContainer.innerHTML = '';
-    
+
     if (state.cart.length === 0) {
         dom.cartItemsContainer.innerHTML = `
             <div class="cart-empty-state">
@@ -733,7 +739,7 @@ function updateCartUI() {
         dom.cartFooter.style.display = 'none';
     } else {
         dom.cartFooter.style.display = 'flex';
-        
+
         state.cart.forEach(item => {
             const itemElement = document.createElement('div');
             itemElement.className = 'cart-item';
@@ -898,8 +904,8 @@ dom.checkoutBtn.addEventListener('click', async () => {
         const orderResponse = await fetch(`${API_BASE_URL}/api/create-order`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                amount: amountInPaise, 
+            body: JSON.stringify({
+                amount: amountInPaise,
                 currency: 'INR',
                 items: state.cart.map(item => ({ id: item.id, quantity: item.quantity, name: item.name }))
             })
@@ -964,7 +970,7 @@ dom.checkoutBtn.addEventListener('click', async () => {
         };
 
         const rzp = new window.Razorpay(options);
-        
+
         rzp.on('payment.failed', function (response) {
             window.location.href = `/failed.html?reason=${encodeURIComponent(response.error.description || "Payment failed.")}`;
         });
@@ -992,7 +998,7 @@ function showToast(message) {
         <span>${message}</span>
     `;
     dom.toastContainer.appendChild(toast);
-    
+
     setTimeout(() => {
         toast.style.animation = 'fadeOut 0.5s forwards';
         setTimeout(() => toast.remove(), 500);
@@ -1025,8 +1031,8 @@ async function checkoutProductDirectly(productId) {
         const orderResponse = await fetch(`${API_BASE_URL}/api/create-order`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                amount: amountInPaise, 
+            body: JSON.stringify({
+                amount: amountInPaise,
                 currency: 'INR',
                 items: [{ id: product.id, quantity: 1, name: product.name }]
             })
@@ -1095,7 +1101,7 @@ async function checkoutProductDirectly(productId) {
         };
 
         const rzp = new window.Razorpay(options);
-        
+
         rzp.on('payment.failed', function (response) {
             window.location.href = `/failed.html?reason=${encodeURIComponent(response.error.description || "Payment failed.")}`;
         });
@@ -1166,7 +1172,7 @@ function initChatbot() {
 
         appendMessage(text, 'user');
         inputField.value = '';
-        
+
         showTypingIndicator();
         setTimeout(() => {
             hideTypingIndicator();
@@ -1195,7 +1201,7 @@ function initChatbot() {
     function appendMessage(text, sender, isHtml = false) {
         const msgDiv = document.createElement('div');
         msgDiv.className = `chatbot-msg ${sender}`;
-        
+
         if (isHtml) {
             msgDiv.innerHTML = text;
         } else {
@@ -1206,7 +1212,7 @@ function initChatbot() {
                 .replace(/\n/g, '<br>');
             msgDiv.innerHTML = formattedText;
         }
-        
+
         messagesContainer.appendChild(msgDiv);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
@@ -1243,7 +1249,7 @@ function initChatbot() {
 
     // Handle suggestion action clicks
     function handleSuggestionClick(value) {
-        switch(value) {
+        switch (value) {
             case 'see_products':
                 appendMessage("Here are some of our premium organic products direct from Kesavanputhoor, Nagercoil:", 'bot');
                 // Render top 3 featured products
@@ -1281,7 +1287,7 @@ function initChatbot() {
                 appendMessage("Need custom order help or corporate inquiries?\n\n💬 Chat with us on **WhatsApp**: [+91 8778093735](https://wa.me/918778093735)\n\n📬 Or scroll down to fill out our order inquiry form and we'll reply instantly!", 'bot');
                 break;
         }
-        
+
         // Show main options menu chips again after response
         setTimeout(() => {
             renderSuggestions([
@@ -1307,7 +1313,7 @@ function initChatbot() {
             </div>
         `;
         appendMessage(cardHtml, 'bot', true);
-        
+
         // Add event listener to the buy now button inside chat message
         const lastMsg = messagesContainer.lastElementChild;
         const buyBtn = lastMsg.querySelector('.chatbot-product-btn');
@@ -1356,7 +1362,7 @@ function initChatbot() {
         // 2. Keyword Responses
         if (text.includes('hello') || text.includes('hi') || text.includes('hey') || text.includes('greetings')) {
             appendMessage("Hey there! Hope you are having a wonderful day. How can I assist you with Aura Coco today?", 'bot');
-        } 
+        }
         else if (text.includes('price') || text.includes('cost') || text.includes('rate') || text.includes('how much')) {
             appendMessage("Our premium tender coconuts start at **₹27**, cold pressed oils at **₹320**, and artisanal shell crafts at **₹290**. Try typing a specific product name to see details!", 'bot');
         }

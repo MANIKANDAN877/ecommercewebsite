@@ -1711,6 +1711,19 @@ button {
         min-height: 44px;
         padding: 8px;
     }
+    .nav-container {
+        padding: 0 1rem !important;
+    }
+    .brand-logo {
+        font-size: 1.35rem !important;
+        white-space: nowrap !important;
+    }
+    .nav-actions {
+        gap: 0.5rem !important;
+    }
+    .nav-btn {
+        padding: 6px !important;
+    }
     
     /* Hero Section */
     .hero-section {
